@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    {% load static %} <!-- Carrega as tags de arquivos estáticos -->
+    <link rel="stylesheet" href="{% static 'vagas/styles.css' %}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HefestoTec</title>
+</head>
+<body>
+    <header>
+        <h1>HefestoTec</h1>
+    </header>
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+    <script>
+        function toggleDescricao(element) {
+            const descricaoCompleta = element.nextElementSibling;
+            if (descricaoCompleta.style.display === "none") {
+                descricaoCompleta.style.display = "inline";
+                element.textContent = "Ver menos";
+            } else {
+                descricaoCompleta.style.display = "none";
+                element.textContent = "Ver mais";
+            }
+        }
+    </script>
+    
+</body>
+</html>

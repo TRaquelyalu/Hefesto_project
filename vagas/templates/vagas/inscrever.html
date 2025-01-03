@@ -1,0 +1,10 @@
+{% extends 'vagas/base.html' %}
+
+{% block content %}
+<h1>Inscrição para {{ vaga.titulo }}</h1>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" style="padding: 8px; background-color: #28a745; color: white; border: none; border-radius: 5px;">Enviar Inscrição</button>
+</form>
+{% endblock %}

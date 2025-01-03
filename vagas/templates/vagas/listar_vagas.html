@@ -1,0 +1,57 @@
+{% extends 'vagas/base.html' %}
+
+{% block content %}
+<h1>Lista de Vagas</h1>
+
+<!-- Campo de busca -->
+<form method="GET" action="{% url 'listar_vagas' %}" style="margin-bottom: 20px;">
+    <input type="text" name="q" placeholder="Digite para buscar vagas..." value="{{ query|default:'' }}" style="padding: 8px; width: 300px;">
+    <button type="submit" style="padding: 8px; background-color: #007bff; color: white; border: none; border-radius: 5px;">Buscar</button>
+</form>
+
+<!-- Lista de vagas em cards -->
+<div class="vagas-container">
+    {% for vaga in page_obj %}
+    <div class="vaga-card">
+        <h2>{{ vaga.titulo }}</h2>
+        <p><strong>Empresa:</strong> {{ vaga.empresa }}</p>
+        <p><strong>Localização:</strong> {{ vaga.localizacao }}</p>
+        <p>
+            {{ vaga.descricao|truncatechars:100 }}
+            <span class="ver-mais" onclick="toggleDescricao(this)">Ver mais</span>
+            <span class="descricao-completa" style="display: none;">{{ vaga.descricao }}</span>
+        </p>
+        <p><strong>Salário:</strong> R$ {{ vaga.salario|default:"A combinar" }}</p>
+        
+        <div class="actions">
+            <a href="{% url 'editar_vaga' vaga.id %}" class="editar">Editar</a>
+            <a href="{% url 'excluir_vaga' vaga.id %}" class="excluir" onclick="return confirm('Tem certeza que deseja excluir esta vaga?')">Excluir</a>
+            <a href="{% url 'inscrever' vaga.id %}" class="inscrever">Inscrever-se</a>
+        </div>
+    </div>
+    {% empty %}
+    <p>Nenhuma vaga encontrada.</p>
+    {% endfor %}
+</div>
+
+<!-- Botões de Paginação -->
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+        <a href="?page=1{% if query %}&q={{ query }}{% endif %}">Primeira</a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">Anterior</a>
+        {% endif %}
+
+        <span>Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Próxima</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}">Última</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}
+
+
+
+

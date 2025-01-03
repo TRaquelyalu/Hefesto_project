@@ -1,0 +1,159 @@
+/* Global Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    margin: 0;
+    padding: 20px; /* Espaçamento extra */
+}
+
+/* Header Styles */
+header {
+    background-color: #007bff;
+    color: white;
+    padding: 15px 20px;
+    text-align: center;
+    font-size: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Cards de vagas */
+.vagas-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 20px; /* Espaçamento entre cards e título */
+}
+
+.vaga-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: all 0.3s;
+}
+
+.vaga-card:hover {
+    background-color: #f0f8ff; /* Azul claro */
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
+}
+
+.vaga-card h2 {
+    color: #007bff;
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.vaga-card p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.ver-mais {
+    color: #007bff;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.descricao-completa {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-in-out;
+    margin-top: 5px;
+}
+
+.descricao-completa.show {
+    max-height: 1000px; /* Ajustar conforme necessário */
+}
+
+/* Botões de ações */
+.actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.actions a {
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.actions .editar {
+    background-color: #28a745;
+}
+
+.actions .editar:hover {
+    background-color: #218838;
+}
+
+.actions .excluir {
+    background-color: #dc3545;
+}
+
+.actions .excluir:hover {
+    background-color: #c82333;
+}
+
+.actions .inscrever {
+    background-color: #ffc107; /* Cor amarela */
+    color: black;
+    font-weight: bold;
+    border: 1px solid #ffa000;
+}
+
+.actions .inscrever:hover {
+    background-color: #ffa000;
+    border-color: #ff8f00;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .vaga-card {
+        width: 100%;
+    }
+
+    header {
+        font-size: 1.2rem;
+    }
+}
+
+/* Paginação */
+.pagination {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.pagination .step-links a {
+    margin: 0 5px;
+    text-decoration: none;
+    padding: 5px 10px;
+    color: white;
+    background-color: #007bff;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.pagination .step-links a:hover {
+    background-color: #0056b3;
+}
+
+.pagination .step-links span {
+    margin: 0 5px;
+    padding: 5px 10px;
+    background-color: #0056b3; /* Destaca a página atual */
+    color: white;
+    border-radius: 5px;
+}
+
+
+
