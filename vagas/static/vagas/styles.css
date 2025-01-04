@@ -4,12 +4,12 @@ body {
     background-color: #f4f4f9;
     color: #333;
     margin: 0;
-    padding: 20px; /* Espaçamento extra */
+    padding: 0;
 }
 
 /* Header Styles */
 header {
-    background-color: #007bff;
+    background: linear-gradient(to right, #007bff, #0056b3);
     color: white;
     padding: 15px 20px;
     text-align: center;
@@ -17,13 +17,55 @@ header {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Cards de vagas */
+/* Navbar Styles */
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.8rem;
+}
+
+.nav-link {
+    font-size: 1.1rem;
+    transition: color 0.3s ease;
+}
+
+.nav-link.active {
+    color: #ffc107 !important;
+    font-weight: bold;
+}
+
+.navbar-toggler {
+    border-color: #ffffff;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(to right, #007bff, #0056b3);
+    color: white;
+    padding: 100px 0;
+    text-align: center;
+}
+
+.hero-section h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+
+.hero-section p {
+    font-size: 1.2rem;
+}
+
+.hero-section .btn {
+    font-size: 1.2rem;
+    padding: 10px 20px;
+}
+
+/* Cards de Vagas */
 .vagas-container {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
-    margin-top: 20px; /* Espaçamento entre cards e título */
+    margin-top: 20px;
 }
 
 .vaga-card {
@@ -39,7 +81,7 @@ header {
 }
 
 .vaga-card:hover {
-    background-color: #f0f8ff; /* Azul claro */
+    background-color: #f0f8ff;
     box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
     transform: translateY(-5px);
 }
@@ -62,58 +104,64 @@ header {
     text-decoration: underline;
 }
 
-.descricao-completa {
-    max-height: 0;
+/* Depoimentos */
+.blockquote {
+    font-style: italic;
+    font-size: 1rem;
+}
+
+.blockquote-footer {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Tabelas */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 40px 0;
+    background-color: #ffffff;
+    border-radius: 8px;
     overflow: hidden;
-    transition: max-height 0.4s ease-in-out;
-    margin-top: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.descricao-completa.show {
-    max-height: 1000px; /* Ajustar conforme necessário */
+table th, table td {
+    padding: 12px 15px;
+    text-align: left;
 }
 
-/* Botões de ações */
-.actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-}
-
-.actions a {
-    text-decoration: none;
-    padding: 8px 12px;
-    border-radius: 5px;
+table th {
+    background-color: #007bff;
     color: white;
-    transition: all 0.3s ease;
-}
-
-.actions .editar {
-    background-color: #28a745;
-}
-
-.actions .editar:hover {
-    background-color: #218838;
-}
-
-.actions .excluir {
-    background-color: #dc3545;
-}
-
-.actions .excluir:hover {
-    background-color: #c82333;
-}
-
-.actions .inscrever {
-    background-color: #ffc107; /* Cor amarela */
-    color: black;
+    text-transform: uppercase;
     font-weight: bold;
-    border: 1px solid #ffa000;
 }
 
-.actions .inscrever:hover {
-    background-color: #ffa000;
-    border-color: #ff8f00;
+table tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Footer */
+footer {
+    background-color: #333;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+}
+
+footer a {
+    text-decoration: none;
+    color: #ffc107;
+    transition: color 0.3s ease;
+}
+
+footer a:hover {
+    color: #ffffff;
 }
 
 /* Responsividade */
@@ -125,35 +173,24 @@ header {
     header {
         font-size: 1.2rem;
     }
+
+    table {
+        font-size: 14px;
+    }
+
+    table th, table td {
+        padding: 10px;
+    }
+
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+
+    .hero-section p {
+        font-size: 1rem;
+    }
 }
 
-/* Paginação */
-.pagination {
-    margin: 20px 0;
-    text-align: center;
-}
-
-.pagination .step-links a {
-    margin: 0 5px;
-    text-decoration: none;
-    padding: 5px 10px;
-    color: white;
-    background-color: #007bff;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-}
-
-.pagination .step-links a:hover {
-    background-color: #0056b3;
-}
-
-.pagination .step-links span {
-    margin: 0 5px;
-    padding: 5px 10px;
-    background-color: #0056b3; /* Destaca a página atual */
-    color: white;
-    border-radius: 5px;
-}
 
 
 

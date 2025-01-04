@@ -1,6 +1,85 @@
-{% extends 'base.html' %}
+{% extends 'vagas/base.html' %}
 
 {% block content %}
-<h1>Bem-vindo ao HefestoTec!</h1>
+<!-- Hero Section -->
+<div class="hero-section bg-primary text-white text-center py-5">
+    <div class="container">
+        <h1 class="display-4 fw-bold">Conectando você às melhores oportunidades!</h1>
+        <p class="lead">Milhares de vagas de emprego ao seu alcance.</p>
+        <a href="{% url 'listar_vagas' %}" class="btn btn-light btn-lg mt-3">Explorar Vagas</a>
+    </div>
+</div>
+
+<!-- Benefícios -->
+<div class="container mt-5">
+    <div class="row text-center">
+        <!-- Benefícios para Candidatos -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">Para Candidatos</h5>
+                    <p class="card-text">Encontre a vaga dos seus sonhos com um clique. Inscreva-se e comece agora!</p>
+                    <a href="{% url 'listar_vagas' %}" class="btn btn-primary">Buscar Vagas</a>
+                </div>
+            </div>
+        </div>
+        <!-- Benefícios para Empresas -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">Para Empresas</h5>
+                    <p class="card-text">Publique suas vagas e encontre os melhores talentos para sua equipe.</p>
+                    <a href="{% url 'criar_vaga' %}" class="btn btn-primary">Publicar Vaga</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Indicadores -->
+    <div class="row text-center my-5">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total de Vagas</h5>
+                    <p class="card-text display-6 text-primary">{{ total_vagas }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total de Inscrições</h5>
+                    <p class="card-text display-6 text-success">{{ total_inscricoes }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Depoimentos -->
+    <div class="text-center mt-5">
+        <h2 class="fw-bold text-primary">O que nossos usuários dizem</h2>
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <blockquote class="blockquote">
+                    <p class="mb-0">"Encontrei o emprego dos meus sonhos em poucos dias!"</p>
+                    <footer class="blockquote-footer">Joana Silva</footer>
+                </blockquote>
+            </div>
+            <div class="col-md-4">
+                <blockquote class="blockquote">
+                    <p class="mb-0">"A plataforma é intuitiva e fácil de usar. Recomendo!"</p>
+                    <footer class="blockquote-footer">Carlos Eduardo</footer>
+                </blockquote>
+            </div>
+            <div class="col-md-4">
+                <blockquote class="blockquote">
+                    <p class="mb-0">"Consegui candidatos excelentes em menos de uma semana!"</p>
+                    <footer class="blockquote-footer">Empresa XYZ</footer>
+                </blockquote>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
+
 
