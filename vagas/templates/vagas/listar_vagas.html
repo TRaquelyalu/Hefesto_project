@@ -12,44 +12,52 @@
 <!-- Lista de vagas em cards -->
 <div class="row">
     {% for vaga in page_obj %}
-    <div class="col-md-4 mb-4">
-        <div class="card shadow-sm h-100">
-            <div class="card-body">
-                <h5 class="card-title text-primary">{{ vaga.titulo }}</h5>
-                <p class="card-text"><strong>Empresa:</strong> {{ vaga.empresa }}</p>
-                <p class="card-text"><strong>Localização:</strong> {{ vaga.localizacao }}</p>
-                <p class="card-text">
-                    <strong>Descrição:</strong> 
-                    {{ vaga.descricao|truncatechars:100 }}
-                    <span class="ver-mais text-primary" onclick="toggleDescricao(this)">Ver mais</span>
-                    <span class="descricao-completa d-none">{{ vaga.descricao }}</span>
-                </p>
-                <p class="card-text"><strong>Faixa Salarial:</strong> R$ {{ vaga.faixa_salarial_minima|default:"-" }} - R$ {{ vaga.faixa_salarial_maxima|default:"A combinar" }}</p>
-                <p class="card-text"><strong>Tipo de Vaga:</strong> {{ vaga.tipo_de_vaga }}</p>
-            </div>
-            <div class="card-footer bg-white d-flex justify-content-between">
-                <a href="{% url 'editar_vaga' vaga.id %}" class="btn btn-success btn-sm">Editar</a>
-                <a href="{% url 'excluir_vaga' vaga.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir esta vaga?')">Excluir</a>
-                <a href="{% url 'inscrever' vaga.id %}" class="btn btn-primary btn-sm">Inscrever-se</a>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">{{ vaga.titulo }}</h5>
+                    <p><strong>Empresa:</strong> {{ vaga.empresa }}</p>
+                    <p><strong>Localização:</strong> {{ vaga.localizacao }}</p>
+                    <p>
+                        <strong>Descrição:</strong> 
+                        {{ vaga.descricao|truncatechars:100 }}
+                        <a href="#" class="text-primary">Ver mais</a>
+                    </p>
+                    <p><strong>Faixa Salarial:</strong> R$ {{ vaga.faixa_salarial_minima|default:"-" }} - R$ {{ vaga.faixa_salarial_maxima|default:"A combinar" }}</p>
+                    <p><strong>Tipo de Vaga:</strong> {{ vaga.tipo_de_vaga }}</p>
+                </div>
+                <div class="card-footer bg-white d-flex justify-content-between">
+                    <!-- Exibir os botões de edição e exclusão apenas para o criador da vaga -->
+                    {% if is_empresa and vaga.criador == user %}
+                        <a href="{% url 'editar_vaga' vaga.id %}" class="btn btn-success btn-sm">Editar</a>
+                        <a href="{% url 'excluir_vaga' vaga.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir esta vaga?')">Excluir</a>
+                    {% endif %}
+
+                    <!-- Botão de inscrição disponível apenas para candidatos -->
+                    {% if is_candidato %}
+                        <a href="{% url 'inscrever' vaga.id %}" class="btn btn-primary btn-sm">Inscrever-se</a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-primary btn-sm">Login para Inscrever-se</a>
+                    {% endif %}
+                </div>
             </div>
         </div>
-    </div>
     {% empty %}
     <p class="text-center">Nenhuma vaga encontrada.</p>
     {% endfor %}
 </div>
 
-<!-- Botões de Paginação -->
+<!-- Paginação -->
 <div class="pagination mt-4">
     <nav aria-label="Navegação de páginas">
         <ul class="pagination justify-content-center">
             {% if page_obj.has_previous %}
-            <li class="page-item">
-                <a class="page-link" href="?page=1{% if query %}&q={{ query }}{% endif %}">Primeira</a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">Anterior</a>
-            </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page=1{% if query %}&q={{ query }}{% endif %}">Primeira</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">Anterior</a>
+                </li>
             {% endif %}
 
             <li class="page-item disabled">
@@ -57,17 +65,19 @@
             </li>
 
             {% if page_obj.has_next %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Próxima</a>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}">Última</a>
-            </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Próxima</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}">Última</a>
+                </li>
             {% endif %}
         </ul>
     </nav>
 </div>
 {% endblock %}
+
+
 
 
 
