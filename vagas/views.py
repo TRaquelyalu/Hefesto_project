@@ -1,60 +1,58 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout
+from django.contrib.auth import logout, login
 from django.contrib import messages
-from .forms import VagaForm, InscricaoForm
+from django.contrib.auth.forms import UserCreationForm
+from .forms import VagaForm, InscricaoForm, ProfileForm
 from .models import Vaga, Inscricao
 
 # Página inicial
 def index(request):
-    total_vagas = Vaga.objects.count()
-    total_inscricoes = Inscricao.objects.count()
-    return render(request, 'vagas/index.html', {'total_vagas': total_vagas, 'total_inscricoes': total_inscricoes})
+    vagas = Vaga.objects.all()
+    if request.user.is_authenticated:
+        if hasattr(request.user, 'profile') and request.user.profile.tipo_usuario == 'Candidato':
+            inscricoes = Inscricao.objects.filter(usuario=request.user.username)
+            return render(request, 'vagas/index_candidato.html', {
+                'vagas': vagas,
+                'inscricoes': inscricoes
+            })
+        elif hasattr(request.user, 'profile') and request.user.profile.tipo_usuario == 'Recrutador':
+            return redirect('tela_inicial_recrutador')
+    return render(request, 'vagas/index.html', {'vagas': vagas})
 
 # Listar vagas
 def listar_vagas(request):
     query = request.GET.get('q')
-    if query:
-        vagas = Vaga.objects.filter(titulo__icontains=query)
-    else:
-        vagas = Vaga.objects.all()
-
+    vagas = Vaga.objects.filter(titulo__icontains=query) if query else Vaga.objects.all()
     paginator = Paginator(vagas, 5)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-
     return render(request, 'vagas/listar_vagas.html', {'page_obj': page_obj, 'query': query})
 
 # Criar vaga
 @login_required
 def criar_vaga(request):
-    if request.method == 'POST':
-        form = VagaForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Vaga criada com sucesso!')
-            return redirect('listar_vagas')
-        else:
-            messages.error(request, 'Erro ao criar a vaga. Verifique os dados informados.')
-    else:
-        form = VagaForm()
+    if not hasattr(request.user, 'profile') or request.user.profile.tipo_usuario != 'Recrutador':
+        messages.error(request, 'Apenas recrutadores podem criar vagas.')
+        return redirect('index')
+    form = VagaForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        vaga = form.save(commit=False)
+        vaga.save()
+        messages.success(request, 'Vaga criada com sucesso!')
+        return redirect('listar_vagas')
     return render(request, 'vagas/criar_vaga.html', {'form': form})
 
 # Editar vaga
 @login_required
 def editar_vaga(request, id):
     vaga = get_object_or_404(Vaga, id=id)
-    if request.method == 'POST':
-        form = VagaForm(request.POST, instance=vaga)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Vaga atualizada com sucesso!')
-            return redirect('listar_vagas')
-        else:
-            messages.error(request, 'Erro ao atualizar a vaga. Verifique os dados informados.')
-    else:
-        form = VagaForm(instance=vaga)
+    form = VagaForm(request.POST or None, instance=vaga)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, 'Vaga atualizada com sucesso!')
+        return redirect('listar_vagas')
     return render(request, 'vagas/editar_vaga.html', {'form': form})
 
 # Excluir vaga
@@ -69,24 +67,20 @@ def excluir_vaga(request, id):
 @login_required
 def inscrever(request, vaga_id):
     vaga = get_object_or_404(Vaga, id=vaga_id)
-    if request.method == 'POST':
-        form = InscricaoForm(request.POST)
-        if form.is_valid():
-            inscricao = form.save(commit=False)
-            inscricao.vaga = vaga
-            inscricao.save()
-            messages.success(request, 'Inscrição realizada com sucesso!')
-            return redirect('listar_vagas')
-        else:
-            messages.error(request, 'Erro ao realizar a inscrição.')
-    else:
-        form = InscricaoForm()
+    form = InscricaoForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        inscricao = form.save(commit=False)
+        inscricao.vaga = vaga
+        inscricao.usuario = request.user.username
+        inscricao.save()
+        messages.success(request, 'Inscrição realizada com sucesso!')
+        return redirect('listar_vagas')
     return render(request, 'vagas/inscrever.html', {'form': form, 'vaga': vaga})
 
 # Listar inscrições
 @login_required
 def listar_inscricoes(request):
-    inscricoes = Inscricao.objects.select_related('vaga').all()
+    inscricoes = Inscricao.objects.select_related('vaga').filter(usuario=request.user.username)
     return render(request, 'vagas/listar_inscricoes.html', {'inscricoes': inscricoes})
 
 # Excluir inscrição
@@ -95,23 +89,68 @@ def excluir_inscricao(request, id):
     inscricao = get_object_or_404(Inscricao, id=id)
     inscricao.delete()
     messages.success(request, 'Inscrição excluída com sucesso!')
-    return redirect('inscricoes')
+    return redirect('listar_inscricoes')
 
-# Logout personalizado
+# Candidatar-se a uma vaga
+@login_required
+def candidatar_se(request, vaga_id):
+    vaga = get_object_or_404(Vaga, id=vaga_id)
+    if request.method == 'POST':
+        form = InscricaoForm(request.POST)
+        if form.is_valid():
+            inscricao = form.save(commit=False)
+            inscricao.vaga = vaga
+            inscricao.usuario = request.user.username
+            inscricao.save()
+            messages.success(request, 'Você se candidatou com sucesso!')
+            return redirect('listar_vagas')
+    else:
+        form = InscricaoForm()
+    return render(request, 'vagas/candidatar_se.html', {'form': form, 'vaga': vaga})
+
+# Editar perfil
+@login_required
+def editar_perfil(request):
+    profile = request.user.profile
+    form = ProfileForm(request.POST or None, request.FILES or None, instance=profile)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, 'Currículo atualizado com sucesso!')
+        return redirect('editar_perfil')
+    return render(request, 'vagas/editar_perfil.html', {'form': form})
+
+# Visualizar perfil
+@login_required
+def ver_perfil(request):
+    return render(request, 'vagas/perfil.html')
+
+# Logout
 def custom_logout(request):
     if request.method == 'POST':
         logout(request)
         messages.success(request, 'Logout realizado com sucesso!')
-        return redirect('index')
+    return redirect('index')
 
-# Página "Sobre Nós"
+# Registro de usuários
+def register(request):
+    form = UserCreationForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        user = form.save()
+        login(request, user)
+        messages.success(request, 'Cadastro realizado com sucesso!')
+        return redirect('index')
+    return render(request, 'vagas/register.html', {'form': form})
+
+# Páginas adicionais
 def sobre_nos(request):
     return render(request, 'vagas/sobre_nos.html')
 
-# Página "Contato"
 def contato(request):
     return render(request, 'vagas/contato.html')
 
-# Página "Termos de Uso"
 def termos_de_uso(request):
     return render(request, 'vagas/termos_de_uso.html')
+
+
+
+

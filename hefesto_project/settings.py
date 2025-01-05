@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-rv%j5qagxnxh0s)8*8el%x04ng3q7cj3+h^sm^eps*+_-ulat3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True  # Altere para False em produção
 
-ALLOWED_HOSTS = []  # Adicione o domínio ou IP do servidor em produção, exemplo: ['meusite.com', '123.45.67.89']
+ALLOWED_HOSTS = []  # Adicione o domínio ou IP do servidor em produção
 
 # Application definition
 INSTALLED_APPS = [
@@ -53,7 +53,7 @@ ROOT_URLCONF = 'hefesto_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # Diretório central de templates
+        'DIRS': [BASE_DIR / 'templates'],  # Pasta principal de templates
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -69,8 +69,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'hefesto_project.wsgi.application'
 
 # Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -79,8 +77,6 @@ DATABASES = {
 }
 
 # Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -98,35 +94,27 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
 LANGUAGE_CODE = 'pt-br'  # Idioma configurado para português brasileiro
-
 TIME_ZONE = 'America/Sao_Paulo'  # Fuso horário do Brasil
-
 USE_I18N = True
-
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']  # Diretório de arquivos estáticos
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # Diretório onde os arquivos estáticos serão coletados
 
 # Media files (arquivos enviados pelo usuário)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Configurações de autenticação
-LOGIN_URL = '/login/'  # Redireciona para a página de login quando necessário
-LOGIN_REDIRECT_URL = '/'  # Redireciona para a página inicial após o login
-LOGOUT_REDIRECT_URL = '/'  # Redireciona para a página inicial após o logout
+LOGIN_URL = '/login/'  # Página de login
+LOGIN_REDIRECT_URL = '/'  # Redireciona após login
+LOGOUT_REDIRECT_URL = '/login/'  # Redireciona após logout
 
 # Segurança em produção
 if not DEBUG:
@@ -147,3 +135,6 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert-warning',
     messages.ERROR: 'alert-danger',
 }
+
+
+

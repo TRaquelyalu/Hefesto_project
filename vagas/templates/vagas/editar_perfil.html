@@ -1,0 +1,14 @@
+{% extends 'vagas/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Editar Currículo</h2>
+    <form method="post" enctype="multipart/form-data" class="card p-4 shadow-sm">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary">Salvar Currículo</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

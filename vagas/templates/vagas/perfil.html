@@ -1,0 +1,27 @@
+{% extends 'vagas/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Meu Currículo</h2>
+    <div class="card shadow-sm p-4">
+        <div class="row">
+            <div class="col-md-4 text-center">
+                {% if user.profile.foto %}
+                    <img src="{{ user.profile.foto.url }}" class="img-thumbnail" alt="Foto de perfil">
+                {% else %}
+                    <img src="{% static 'vagas/images/default-profile.png' %}" class="img-thumbnail" alt="Foto padrão">
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <h3>{{ user.get_full_name }}</h3>
+                <p><strong>Nome de Usuário:</strong> {{ user.username }}</p>
+                <p><strong>Bio:</strong> {{ user.profile.bio }}</p>
+                <p><strong>Habilidades:</strong> {{ user.profile.habilidades }}</p>
+                <p><strong>Experiência:</strong> {{ user.profile.experiencia_profissional }}</p>
+                <p><strong>Formação:</strong> {{ user.profile.formacao_academica }}</p>
+                <p><strong>Idiomas:</strong> {{ user.profile.idiomas }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

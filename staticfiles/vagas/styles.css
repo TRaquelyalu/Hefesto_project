@@ -1,0 +1,196 @@
+/* Global Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* Header Styles */
+header {
+    background: linear-gradient(to right, #007bff, #0056b3);
+    color: white;
+    padding: 15px 20px;
+    text-align: center;
+    font-size: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Navbar Styles */
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.8rem;
+}
+
+.nav-link {
+    font-size: 1.1rem;
+    transition: color 0.3s ease;
+}
+
+.nav-link.active {
+    color: #ffc107 !important;
+    font-weight: bold;
+}
+
+.navbar-toggler {
+    border-color: #ffffff;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(to right, #007bff, #0056b3);
+    color: white;
+    padding: 100px 0;
+    text-align: center;
+}
+
+.hero-section h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+
+.hero-section p {
+    font-size: 1.2rem;
+}
+
+.hero-section .btn {
+    font-size: 1.2rem;
+    padding: 10px 20px;
+}
+
+/* Cards de Vagas */
+.vagas-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.vaga-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: all 0.3s;
+}
+
+.vaga-card:hover {
+    background-color: #f0f8ff;
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
+}
+
+.vaga-card h2 {
+    color: #007bff;
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.vaga-card p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.ver-mais {
+    color: #007bff;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+/* Depoimentos */
+.blockquote {
+    font-style: italic;
+    font-size: 1rem;
+}
+
+.blockquote-footer {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Tabelas */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 40px 0;
+    background-color: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+table th, table td {
+    padding: 12px 15px;
+    text-align: left;
+}
+
+table th {
+    background-color: #007bff;
+    color: white;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+table tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Footer */
+footer {
+    background-color: #333;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+}
+
+footer a {
+    text-decoration: none;
+    color: #ffc107;
+    transition: color 0.3s ease;
+}
+
+footer a:hover {
+    color: #ffffff;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .vaga-card {
+        width: 100%;
+    }
+
+    header {
+        font-size: 1.2rem;
+    }
+
+    table {
+        font-size: 14px;
+    }
+
+    table th, table td {
+        padding: 10px;
+    }
+
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+
+    .hero-section p {
+        font-size: 1rem;
+    }
+}
+
+
+
+
