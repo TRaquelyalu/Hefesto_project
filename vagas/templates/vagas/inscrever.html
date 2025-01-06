@@ -1,10 +1,17 @@
 {% extends 'vagas/base.html' %}
 
 {% block content %}
-<h1>Inscrição para {{ vaga.titulo }}</h1>
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" style="padding: 8px; background-color: #28a745; color: white; border: none; border-radius: 5px;">Enviar Inscrição</button>
-</form>
+<div class="container my-5">
+    <h2 class="text-center">Inscrever-se na Vaga: {{ vaga.titulo }}</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="text-center mt-3">
+            <button type="submit" class="btn btn-primary">Enviar Inscrição</button>
+            <a href="{% url 'listar_vagas' %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
 {% endblock %}
+
+

@@ -1,27 +1,49 @@
 {% extends 'vagas/base.html' %}
 
-
 {% block content %}
-<div class="container d-flex justify-content-center align-items-center" style="height: 80vh;">
-    <div class="card p-4" style="width: 25rem;">
-        <h2 class="text-center">Login</h2>
-        <form method="post" class="mt-3">
-            {% csrf_token %}
-            <div class="mb-3">
-                <label for="username" class="form-label">Usuário:</label>
-                <input type="text" name="username" id="username" class="form-control" placeholder="Digite seu usuário">
+<section class="bg-black text-gold py-5">
+    <div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+        <div class="card bg-dark text-gold p-4 border-gold shadow-lg" style="width: 25rem;">
+            <h2 class="text-center fw-bold mb-4">Login</h2>
+            
+            <!-- Botões de Seleção de Tipo de Login -->
+            <div class="mb-3 text-center">
+                <button type="button" class="btn btn-gold me-2" onclick="selecionarTipo('candidato')">Candidato</button>
+                <button type="button" class="btn btn-gold" onclick="selecionarTipo('empresa')">Empresa</button>
             </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Senha:</label>
-                <input type="password" name="password" id="password" class="form-control" placeholder="Digite sua senha">
-            </div>
-            <button type="submit" class="btn btn-primary w-100">Login</button>
-        </form>
-        <p class="text-center mt-3">
-            Não tem uma conta? 
-            <a href="{% url 'register' %}" class="text-decoration-none">Cadastre-se aqui</a>
-        </p>
+
+            <!-- Formulário de Login -->
+            <form method="POST" action="{% url 'login' %}">
+                {% csrf_token %}
+                <input type="hidden" name="tipo_usuario" id="tipo_usuario" value="candidato"> <!-- Valor padrão -->
+
+                <div class="mb-3">
+                    <label for="username" class="form-label">Usuário</label>
+                    <input type="text" name="username" id="username" class="form-control bg-dark text-light border-gold" placeholder="Digite seu usuário" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Senha</label>
+                    <input type="password" name="password" id="password" class="form-control bg-dark text-light border-gold" placeholder="Digite sua senha" required>
+                </div>
+                <button type="submit" class="btn btn-gold w-100">Entrar</button>
+            </form>
+
+            <!-- Link para Cadastro -->
+            <p class="text-center mt-3">
+                Não tem uma conta? 
+                <a href="{% url 'register' %}" class="text-gold text-decoration-none fw-bold">Cadastre-se aqui</a>
+            </p>
+        </div>
     </div>
-</div>
+</section>
+
+<script>
+    // Função para alternar o tipo de login
+    function selecionarTipo(tipo) {
+        document.getElementById('tipo_usuario').value = tipo;
+    }
+</script>
 {% endblock %}
+
+
 

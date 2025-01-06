@@ -1,9 +1,22 @@
 {% extends 'vagas/base.html' %}
 
 {% block content %}
-<div class="container my-5">
-    <h1 class="text-primary">Sobre Nós</h1>
-    <p>Bem-vindo ao HefestoTec! Nossa missão é conectar empresas e talentos com eficiência e inovação.</p>
-    <p>Trabalhamos para oferecer a melhor experiência para candidatos e empregadores.</p>
-</div>
+<section class="bg-black text-gold py-5">
+    <div class="container">
+        <h1 class="text-center fw-bold mb-4">Sobre Nós</h1>
+        <p class="fs-5">
+            Bem-vindo ao <span class="fw-bold">HefestoTec</span>, sua plataforma confiável para conectar talentos excepcionais às melhores oportunidades do mercado de tecnologia. 
+        </p>
+        <p class="fs-5">
+            Nosso objetivo é criar um ambiente onde empresas e candidatos possam interagir de forma eficiente, promovendo inovação e crescimento profissional. 
+        </p>
+        <p class="fs-5">
+            Acreditamos que cada talento merece ser valorizado e cada empresa merece o time certo para atingir seus objetivos. Por isso, nos dedicamos a oferecer uma experiência única e personalizada.
+        </p>
+        <div class="text-center mt-5">
+            <a href="{% url 'contato' %}" class="btn btn-gold btn-lg">Entre em Contato</a>
+        </div>
+    </div>
+</section>
 {% endblock %}
+

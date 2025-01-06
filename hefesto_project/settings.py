@@ -53,7 +53,7 @@ ROOT_URLCONF = 'hefesto_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # Pasta principal de templates
+        'DIRS': [BASE_DIR / 'templates'],  # Diretório principal para templates
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -83,7 +83,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-        'OPTIONS': {'min_length': 8},  # Mínimo de 8 caracteres
+        'OPTIONS': {'min_length': 8},
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -94,19 +94,19 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Internationalization
-LANGUAGE_CODE = 'pt-br'  # Idioma configurado para português brasileiro
-TIME_ZONE = 'America/Sao_Paulo'  # Fuso horário do Brasil
+LANGUAGE_CODE = 'pt-br'
+TIME_ZONE = 'America/Sao_Paulo'
 USE_I18N = True
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # Diretório de arquivos estáticos
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Diretório onde os arquivos estáticos serão coletados
+STATICFILES_DIRS = [BASE_DIR / 'static']  # Diretório para arquivos estáticos
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # Diretório para coletar arquivos estáticos em produção
 
 # Media files (arquivos enviados pelo usuário)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -116,7 +116,7 @@ LOGIN_URL = '/login/'  # Página de login
 LOGIN_REDIRECT_URL = '/'  # Redireciona após login
 LOGOUT_REDIRECT_URL = '/login/'  # Redireciona após logout
 
-# Segurança em produção
+# Configurações de segurança para produção
 if not DEBUG:
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
@@ -126,7 +126,7 @@ if not DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
 
-# Configuração adicional para mensagens
+# Configuração de mensagens
 from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
     messages.DEBUG: 'alert-secondary',
@@ -135,6 +135,7 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert-warning',
     messages.ERROR: 'alert-danger',
 }
+
 
 
 

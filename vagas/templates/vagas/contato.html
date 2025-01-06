@@ -1,25 +1,31 @@
 {% extends 'vagas/base.html' %}
 
 {% block content %}
-<div class="container my-5">
-    <h1 class="text-center text-primary">Contato</h1>
-    <p class="text-center">Se você tiver dúvidas, sugestões ou precisar de suporte, entre em contato conosco.</p>
-
-    <form class="mt-4" action="#" method="post">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label for="nome" class="form-label">Nome</label>
-            <input type="text" class="form-control" id="nome" placeholder="Seu nome" required>
-        </div>
-        <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" placeholder="Seu email" required>
-        </div>
-        <div class="mb-3">
-            <label for="mensagem" class="form-label">Mensagem</label>
-            <textarea class="form-control" id="mensagem" rows="5" placeholder="Escreva sua mensagem aqui" required></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">Enviar</button>
-    </form>
-</div>
+<section class="bg-black text-gold py-5">
+    <div class="container">
+        <h1 class="text-center fw-bold mb-4">Fale Conosco</h1>
+        <p class="text-center fs-5 mb-4">
+            Entre em contato conosco preenchendo o formulário abaixo. Estamos prontos para ajudá-lo!
+        </p>
+        <form method="POST" action="{% url 'contato' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="name" class="form-label">Nome</label>
+                <input type="text" name="name" class="form-control bg-dark text-light border-gold" id="name" placeholder="Digite seu nome" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" name="email" class="form-control bg-dark text-light border-gold" id="email" placeholder="Digite seu email" required>
+            </div>
+            <div class="mb-3">
+                <label for="message" class="form-label">Mensagem</label>
+                <textarea name="message" class="form-control bg-dark text-light border-gold" id="message" rows="5" placeholder="Digite sua mensagem" required></textarea>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-gold btn-lg">Enviar</button>
+            </div>
+        </form>
+    </div>
+</section>
 {% endblock %}
+

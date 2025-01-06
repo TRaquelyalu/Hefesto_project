@@ -1,81 +1,86 @@
 {% extends 'vagas/base.html' %}
 
 {% block content %}
-<h1 class="text-center mb-4">Lista de Vagas</h1>
+<section class="bg-black text-gold py-5">
+    <div class="container">
+        <h1 class="text-center fw-bold mb-4">Lista de Vagas</h1>
 
-<!-- Campo de busca -->
-<form method="GET" action="{% url 'listar_vagas' %}" class="mb-4 d-flex justify-content-center">
-    <input type="text" name="q" placeholder="Digite para buscar vagas..." value="{{ query|default:'' }}" class="form-control w-50 me-2">
-    <button type="submit" class="btn btn-primary">Buscar</button>
-</form>
+        <!-- Campo de busca -->
+        <form method="GET" action="{% url 'listar_vagas' %}" class="mb-4 d-flex justify-content-center">
+            <input type="text" name="q" placeholder="Digite para buscar vagas..." value="{{ query|default:'' }}" class="form-control w-50 me-2 bg-black text-gold border-gold">
+            <button type="submit" class="btn btn-gold">Buscar</button>
+        </form>
 
-<!-- Lista de vagas em cards -->
-<div class="row">
-    {% for vaga in page_obj %}
-        <div class="col-md-4 mb-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <h5 class="card-title text-primary">{{ vaga.titulo }}</h5>
-                    <p><strong>Empresa:</strong> {{ vaga.empresa }}</p>
-                    <p><strong>Localização:</strong> {{ vaga.localizacao }}</p>
-                    <p>
-                        <strong>Descrição:</strong> 
-                        {{ vaga.descricao|truncatechars:100 }}
-                        <a href="#" class="text-primary">Ver mais</a>
-                    </p>
-                    <p><strong>Faixa Salarial:</strong> R$ {{ vaga.faixa_salarial_minima|default:"-" }} - R$ {{ vaga.faixa_salarial_maxima|default:"A combinar" }}</p>
-                    <p><strong>Tipo de Vaga:</strong> {{ vaga.tipo_de_vaga }}</p>
+        <!-- Lista de vagas em cards -->
+        <div class="row">
+            {% for vaga in page_obj %}
+                <div class="col-md-4 mb-4">
+                    <div class="card bg-black text-gold border-gold shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ vaga.titulo }}</h5>
+                            <p><strong>Empresa:</strong> {{ vaga.empresa }}</p>
+                            <p><strong>Localização:</strong> {{ vaga.localizacao }}</p>
+                            <p>
+                                <strong>Descrição:</strong> 
+                                {{ vaga.descricao|truncatechars:100 }}
+                                <a href="#" class="text-gold">Ver mais</a>
+                            </p>
+                            <p><strong>Faixa Salarial:</strong> R$ {{ vaga.faixa_salarial_minima|default:"-" }} - R$ {{ vaga.faixa_salarial_maxima|default:"A combinar" }}</p>
+                            <p><strong>Tipo de Vaga:</strong> {{ vaga.tipo_de_vaga }}</p>
+                        </div>
+                        <div class="card-footer bg-black d-flex justify-content-between">
+                            <!-- Botões para empresas -->
+                            {% if is_empresa and vaga.criador == user %}
+                                <a href="{% url 'editar_vaga' vaga.id %}" class="btn btn-success btn-sm">Editar</a>
+                                <a href="{% url 'excluir_vaga' vaga.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir esta vaga?')">Excluir</a>
+                            {% endif %}
+
+                            <!-- Botão de inscrição para candidatos -->
+                            {% if is_candidato %}
+                                <a href="{% url 'inscrever' vaga.id %}" class="btn btn-gold btn-sm">Candidatar-se</a>
+                            {% else %}
+                                <a href="{% url 'login' %}" class="btn btn-gold btn-sm">Login para Candidatar-se</a>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
-                <div class="card-footer bg-white d-flex justify-content-between">
-                    <!-- Exibir os botões de edição e exclusão apenas para o criador da vaga -->
-                    {% if is_empresa and vaga.criador == user %}
-                        <a href="{% url 'editar_vaga' vaga.id %}" class="btn btn-success btn-sm">Editar</a>
-                        <a href="{% url 'excluir_vaga' vaga.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir esta vaga?')">Excluir</a>
-                    {% endif %}
-
-                    <!-- Botão de inscrição disponível apenas para candidatos -->
-                    {% if is_candidato %}
-                        <a href="{% url 'inscrever' vaga.id %}" class="btn btn-primary btn-sm">Inscrever-se</a>
-                    {% else %}
-                        <a href="{% url 'login' %}" class="btn btn-primary btn-sm">Login para Inscrever-se</a>
-                    {% endif %}
-                </div>
-            </div>
+            {% empty %}
+            <p class="text-center">Nenhuma vaga encontrada.</p>
+            {% endfor %}
         </div>
-    {% empty %}
-    <p class="text-center">Nenhuma vaga encontrada.</p>
-    {% endfor %}
-</div>
 
-<!-- Paginação -->
-<div class="pagination mt-4">
-    <nav aria-label="Navegação de páginas">
-        <ul class="pagination justify-content-center">
-            {% if page_obj.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?page=1{% if query %}&q={{ query }}{% endif %}">Primeira</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">Anterior</a>
-                </li>
-            {% endif %}
+        <!-- Paginação -->
+        <div class="pagination mt-4">
+            <nav aria-label="Navegação de páginas">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link bg-black text-gold border-gold" href="?page=1{% if query %}&q={{ query }}{% endif %}">Primeira</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link bg-black text-gold border-gold" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">Anterior</a>
+                        </li>
+                    {% endif %}
 
-            <li class="page-item disabled">
-                <span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
-            </li>
+                    <li class="page-item disabled">
+                        <span class="page-link bg-black text-gold border-gold">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+                    </li>
 
-            {% if page_obj.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Próxima</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}">Última</a>
-                </li>
-            {% endif %}
-        </ul>
-    </nav>
-</div>
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link bg-black text-gold border-gold" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Próxima</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link bg-black text-gold border-gold" href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}">Última</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+</section>
 {% endblock %}
+
 
 
 
