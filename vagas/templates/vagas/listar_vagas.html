@@ -23,7 +23,7 @@
                             <p>
                                 <strong>Descrição:</strong> 
                                 {{ vaga.descricao|truncatechars:100 }}
-                                <a href="#" class="text-gold">Ver mais</a>
+                                <a href="{% url 'detalhes_vaga' vaga.id %}" class="text-gold">Ver mais</a>
                             </p>
                             <p><strong>Faixa Salarial:</strong> R$ {{ vaga.faixa_salarial_minima|default:"-" }} - R$ {{ vaga.faixa_salarial_maxima|default:"A combinar" }}</p>
                             <p><strong>Tipo de Vaga:</strong> {{ vaga.tipo_de_vaga }}</p>

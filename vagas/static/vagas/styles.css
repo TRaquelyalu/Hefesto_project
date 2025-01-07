@@ -58,7 +58,7 @@ html, body {
 }
 
 .carousel-inner img {
-    width: 100%;
+    width: 300px;
     height: calc(100% - 10rem); /* Ajusta o carrossel para ocupar o tamanho correto */
     object-fit: cover; /* Preenche todo o espaço */
 }

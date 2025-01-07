@@ -1,188 +1,241 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout, login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
-from django.contrib.auth.forms import UserCreationForm
-from django.core.paginator import Paginator
-from .forms import VagaForm, InscricaoForm
-from .models import Vaga, Inscricao
+from .forms import VagaForm, InscricaoForm, CustomUserCreationForm, CandidatoForm, EmpresaForm
+from .models import Vaga, Inscricao, Profile
 
 # Página inicial dinâmica
 def index(request):
     user_group = None
-    if request.user.is_authenticated and request.user.groups.exists():
-        user_group = request.user.groups.first().name
+    if request.user.is_authenticated and hasattr(request.user, 'profile'):
+        user_group = request.user.profile.tipo_usuario
     return render(request, 'vagas/index.html', {'user_group': user_group})
 
-
-# Login personalizado
-def login_view(request):
+# Cadastro de candidatos
+def cadastro_candidato(request):
     if request.method == "POST":
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        tipo_usuario = request.POST.get('tipo_usuario')
-
-        user = authenticate(request, username=username, password=password)
-        if user:
-            login(request, user)
-            if tipo_usuario == "candidato" and user.groups.filter(name="Candidato").exists():
-                return redirect('painel_candidato')
-            elif tipo_usuario == "empresa" and user.groups.filter(name="Empresa").exists():
-                return redirect('painel_empresa')
-            else:
-                messages.error(request, "Tipo de usuário inválido.")
-                return redirect('login')
+        form = CustomUserCreationForm(request.POST)
+        profile_form = CandidatoForm(request.POST)
+        if form.is_valid() and profile_form.is_valid():
+            user = form.save()
+            profile = profile_form.save(commit=False)
+            profile.user = user
+            profile.tipo_usuario = "Candidato"
+            profile.save()
+            messages.success(request, "Cadastro de candidato realizado com sucesso!")
+            return redirect('login')
         else:
-            messages.error(request, "Credenciais inválidas.")
-    return render(request, 'vagas/login.html')
+            messages.error(request, "Corrija os erros abaixo.")
+    else:
+        form = CustomUserCreationForm()
+        profile_form = CandidatoForm()
+    return render(request, 'vagas/cadastro_candidato.html', {'form': form, 'profile_form': profile_form})
 
+# Cadastro de empresas
+def cadastro_empresa(request):
+    if request.method == "POST":
+        form = CustomUserCreationForm(request.POST)
+        profile_form = EmpresaForm(request.POST)
+        if form.is_valid() and profile_form.is_valid():
+            user = form.save()
+            profile = profile_form.save(commit=False)
+            profile.user = user
+            profile.tipo_usuario = "Empresa"
+            profile.save()
+            messages.success(request, "Cadastro de empresa realizado com sucesso!")
+            return redirect('login')
+        else:
+            messages.error(request, "Corrija os erros abaixo.")
+    else:
+        form = CustomUserCreationForm()
+        profile_form = EmpresaForm()
+    return render(request, 'vagas/cadastro_empresa.html', {'form': form, 'profile_form': profile_form})
 
-# Painéis
-@login_required
-def painel_candidato(request):
-    if not request.user.groups.filter(name="Candidato").exists():
-        messages.error(request, "Acesso restrito a candidatos.")
-        return redirect('index')
-    return render(request, 'vagas/painel_candidato.html')
-
-
-@login_required
-def painel_empresa(request):
-    if not request.user.groups.filter(name="Empresa").exists():
-        messages.error(request, "Acesso restrito a empresas.")
-        return redirect('index')
-    return render(request, 'vagas/painel_empresa.html')
-
-
-# Listar vagas
-def listar_vagas(request):
-    query = request.GET.get('q', '')
-    vagas = Vaga.objects.filter(titulo__icontains=query) if query else Vaga.objects.all().order_by('-id')
-    paginator = Paginator(vagas, 5)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    return render(request, 'vagas/listar_vagas.html', {
-        'page_obj': page_obj,
-        'query': query,
-        'is_candidato': request.user.is_authenticated and request.user.groups.filter(name="Candidato").exists(),
-        'is_empresa': request.user.is_authenticated and request.user.groups.filter(name="Empresa").exists(),
-    })
-
-
-# Gerenciamento de vagas (somente para empresas)
-@login_required
-def criar_vaga(request):
-    if not request.user.groups.filter(name="Empresa").exists():
-        messages.error(request, 'Apenas empresas podem criar vagas.')
-        return redirect('index')
-    form = VagaForm(request.POST or None)
-    if request.method == 'POST' and form.is_valid():
-        vaga = form.save(commit=False)
-        vaga.criador = request.user
-        vaga.save()
-        messages.success(request, 'Vaga criada com sucesso!')
-        return redirect('listar_vagas')
-    return render(request, 'vagas/criar_vaga.html', {'form': form})
-
-
-@login_required
-def editar_vaga(request, id):
-    vaga = get_object_or_404(Vaga, id=id)
-    if vaga.criador != request.user:
-        messages.error(request, 'Você não tem permissão para editar esta vaga.')
-        return redirect('listar_vagas')
-    form = VagaForm(request.POST or None, instance=vaga)
-    if request.method == 'POST' and form.is_valid():
-        form.save()
-        messages.success(request, 'Vaga atualizada com sucesso!')
-        return redirect('listar_vagas')
-    return render(request, 'vagas/editar_vaga.html', {'form': form})
-
-
-@login_required
-def excluir_vaga(request, id):
-    vaga = get_object_or_404(Vaga, id=id)
-    if vaga.criador != request.user:
-        messages.error(request, 'Você não tem permissão para excluir esta vaga.')
-        return redirect('listar_vagas')
-    vaga.delete()
-    messages.success(request, 'Vaga excluída com sucesso!')
-    return redirect('listar_vagas')
-
-
-# Inscrições (somente para candidatos)
-@login_required
-def inscrever(request, vaga_id):
-    vaga = get_object_or_404(Vaga, id=vaga_id)
-    if not request.user.groups.filter(name="Candidato").exists():
-        messages.error(request, 'Apenas candidatos podem se inscrever em vagas.')
-        return redirect('listar_vagas')
-
-    form = InscricaoForm(request.POST or None)
-    if request.method == 'POST' and form.is_valid():
-        inscricao = form.save(commit=False)
-        inscricao.vaga = vaga
-        inscricao.usuario = request.user
-        inscricao.save()
-        messages.success(request, 'Inscrição realizada com sucesso!')
-        return redirect('listar_vagas')
-
-    return render(request, 'vagas/inscrever.html', {'form': form, 'vaga': vaga})
-
-
+# Listar inscrições
 @login_required
 def listar_inscricoes(request):
-    if not request.user.groups.filter(name="Candidato").exists():
-        messages.error(request, 'Apenas candidatos podem visualizar inscrições.')
+    if request.user.profile.tipo_usuario != "Candidato":
+        messages.error(request, "Acesso restrito a candidatos.")
         return redirect('index')
-
-    inscricoes = Inscricao.objects.filter(usuario=request.user)
+    inscricoes = Inscricao.objects.filter(usuario=request.user).select_related('vaga')
     return render(request, 'vagas/listar_inscricoes.html', {'inscricoes': inscricoes})
 
-
+# Excluir inscrição
 @login_required
 def excluir_inscricao(request, id):
     inscricao = get_object_or_404(Inscricao, id=id)
     if inscricao.usuario != request.user:
-        messages.error(request, 'Você não tem permissão para excluir esta inscrição.')
+        messages.error(request, "Você não tem permissão para excluir esta inscrição.")
         return redirect('listar_inscricoes')
-
     inscricao.delete()
-    messages.success(request, 'Inscrição excluída com sucesso!')
+    messages.success(request, "Inscrição excluída com sucesso!")
     return redirect('listar_inscricoes')
 
+# Listar todas as vagas disponíveis
+def listar_vagas(request):
+    vagas = Vaga.objects.all()
+    return render(request, 'vagas/listar_vagas.html', {'vagas': vagas})
 
-# Registro de usuários
-def register(request):
-    form = UserCreationForm(request.POST or None)
-    if request.method == 'POST' and form.is_valid():
-        user = form.save()
-        login(request, user)
-        messages.success(request, 'Cadastro realizado com sucesso!')
+@login_required
+def criar_vaga(request):
+    """Função para criar uma nova vaga (somente empresas)."""
+    # Verifica se o usuário é uma empresa
+    if request.user.profile.tipo_usuario != "Empresa":
+        messages.error(request, "Apenas empresas podem criar vagas.")
         return redirect('index')
-    return render(request, 'vagas/register.html', {'form': form})
 
+    # Processa o formulário de criação
+    if request.method == "POST":
+        form = VagaForm(request.POST)
+        if form.is_valid():
+            vaga = form.save(commit=False)
+            vaga.empresa = request.user.username  # Associa a vaga à empresa logada
+            vaga.save()
+            messages.success(request, "Vaga criada com sucesso!")
+            return redirect('painel_empresa')
+    else:
+        form = VagaForm()
 
-# Logout customizado
+    return render(request, 'vagas/criar_vaga.html', {'form': form})
+
+@login_required
+def editar_vaga(request, id):
+    """Função para editar uma vaga existente."""
+    vaga = get_object_or_404(Vaga, id=id)
+
+    # Verifica se a vaga pertence à empresa logada
+    if vaga.empresa != request.user.username:
+        messages.error(request, "Você não tem permissão para editar esta vaga.")
+        return redirect('painel_empresa')
+
+    if request.method == "POST":
+        form = VagaForm(request.POST, instance=vaga)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Vaga atualizada com sucesso!")
+            return redirect('painel_empresa')
+    else:
+        form = VagaForm(instance=vaga)
+
+    return render(request, 'vagas/editar_vaga.html', {'form': form, 'vaga': vaga})
+
+@login_required
+def excluir_vaga(request, id):
+    """Função para excluir uma vaga."""
+    vaga = get_object_or_404(Vaga, id=id)
+
+    # Verifica se a vaga pertence à empresa logada
+    if vaga.empresa != request.user.username:
+        messages.error(request, "Você não tem permissão para excluir esta vaga.")
+        return redirect('painel_empresa')
+
+    vaga.delete()
+    messages.success(request, "Vaga excluída com sucesso!")
+    return redirect('painel_empresa')
+
+def detalhes_vaga(request, id):
+    """Exibe os detalhes de uma vaga específica."""
+    vaga = get_object_or_404(Vaga, id=id)
+    return render(request, 'vagas/detalhes_vaga.html', {'vaga': vaga})
+
+@login_required
+def inscrever(request, vaga_id):
+    """Permite que candidatos se inscrevam em uma vaga."""
+    vaga = get_object_or_404(Vaga, id=vaga_id)
+
+    # Verifica se o usuário é um candidato
+    if request.user.profile.tipo_usuario != "Candidato":
+        messages.error(request, "Apenas candidatos podem se inscrever em vagas.")
+        return redirect('listar_vagas')
+
+    # Processa o formulário de inscrição
+    if request.method == "POST":
+        form = InscricaoForm(request.POST)
+        if form.is_valid():
+            inscricao = form.save(commit=False)
+            inscricao.vaga = vaga
+            inscricao.usuario = request.user
+            inscricao.save()
+            messages.success(request, "Inscrição realizada com sucesso!")
+            return redirect('painel_candidato')
+        else:
+            messages.error(request, "Houve um problema com sua inscrição. Tente novamente.")
+    else:
+        form = InscricaoForm()
+
+    return render(request, 'vagas/inscrever.html', {'form': form, 'vaga': vaga})
+
+def login_view(request):
+    """Exibe a página de login e autentica o usuário."""
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            # Redireciona o usuário com base no tipo de perfil
+            if hasattr(user, 'profile'):
+                if user.profile.tipo_usuario == "Candidato":
+                    return redirect('painel_candidato')
+                elif user.profile.tipo_usuario == "Empresa":
+                    return redirect('painel_empresa')
+            return redirect('index')
+        else:
+            messages.error(request, "Credenciais inválidas. Tente novamente.")
+    return render(request, 'vagas/login.html')
+
 def custom_logout(request):
+    """Realiza o logout do usuário."""
     logout(request)
-    messages.success(request, 'Logout realizado com sucesso!')
+    messages.success(request, "Você foi desconectado com sucesso.")
     return redirect('index')
 
+@login_required
+def painel_candidato(request):
+    """Exibe o painel para candidatos."""
+    # Verifica se o usuário logado é um candidato
+    if request.user.profile.tipo_usuario != "Candidato":
+        messages.error(request, "Acesso restrito a candidatos.")
+        return redirect('index')
 
-# Páginas adicionais
+    # Busca inscrições associadas ao candidato logado
+    inscricoes = Inscricao.objects.filter(usuario=request.user).select_related('vaga')
+
+    # Renderiza o painel do candidato
+    return render(request, 'vagas/painel_candidato.html', {'inscricoes': inscricoes})
+
+@login_required
+def painel_empresa(request):
+    """Exibe o painel para empresas."""
+    # Verifica se o usuário logado é uma empresa
+    if request.user.profile.tipo_usuario != "Empresa":
+        messages.error(request, "Acesso restrito a empresas.")
+        return redirect('index')
+
+    # Busca vagas criadas pela empresa logada
+    vagas = Vaga.objects.filter(empresa=request.user.username)
+
+    # Renderiza o painel da empresa
+    return render(request, 'vagas/painel_empresa.html', {'vagas': vagas})
+
 def sobre_nos(request):
+    """Renderiza a página 'Sobre Nós'."""
     return render(request, 'vagas/sobre_nos.html')
 
-
 def contato(request):
+    """Renderiza a página 'Contato'."""
     return render(request, 'vagas/contato.html')
 
-
 def termos_de_uso(request):
+    """Renderiza a página de Termos de Uso."""
     return render(request, 'vagas/termos_de_uso.html')
 
+def index_visitantes(request):
+    """Renderiza a página inicial para visitantes, listando as vagas publicadas."""
+    vagas = Vaga.objects.all().order_by('-data_publicacao')
+    return render(request, 'vagas/index_visitantes.html', {'vagas': vagas})
 
 
 

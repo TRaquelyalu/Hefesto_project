@@ -5,5 +5,10 @@ class VagasConfig(AppConfig):
     name = 'vagas'
 
     def ready(self):
-        import vagas.signals  # Garante que os sinais são registrados
+        try:
+            import vagas.signals  # Somente se você usa signals
+        except ImportError:
+            pass  # Ignora se não houver signals configurados
+
+
 

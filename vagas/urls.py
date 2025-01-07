@@ -11,6 +11,7 @@ urlpatterns = [
     path('vagas/criar/', views.criar_vaga, name='criar_vaga'),
     path('vagas/editar/<int:id>/', views.editar_vaga, name='editar_vaga'),
     path('vagas/excluir/<int:id>/', views.excluir_vaga, name='excluir_vaga'),
+    path('vagas/<int:id>/', views.detalhes_vaga, name='detalhes_vaga'),
 
     # Inscrições
     path('vagas/inscrever/<int:vaga_id>/', views.inscrever, name='inscrever'),
@@ -20,7 +21,11 @@ urlpatterns = [
     # Autenticação
     path('login/', views.login_view, name='login'),
     path('logout/', views.custom_logout, name='logout'),
-    path('register/', views.register, name='register'),
+    
+
+    # Cadastro separado
+    path('cadastro/candidato/', views.cadastro_candidato, name='cadastro_candidato'),
+    path('cadastro/empresa/', views.cadastro_empresa, name='cadastro_empresa'),
 
     # Painéis
     path('painel/candidato/', views.painel_candidato, name='painel_candidato'),
@@ -31,9 +36,31 @@ urlpatterns = [
     path('contato/', views.contato, name='contato'),
     path('termos-de-uso/', views.termos_de_uso, name='termos_de_uso'),
 
+    # Página para visitantes
+    path('visitantes/', views.index_visitantes, name='index_visitantes'),
+
     # Teste ou desenvolvimento
     path('test/', lambda request: render(request, 'vagas/test.html'), name='test'),
 ]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

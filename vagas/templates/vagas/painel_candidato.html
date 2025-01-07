@@ -1,7 +1,37 @@
 {% extends 'vagas/base.html' %}
+
 {% block content %}
-<div class="container py-5">
-    <h1 class="text-gold text-center">Painel do Candidato</h1>
-    <p class="text-center">Aqui você pode visualizar suas vagas favoritas e acompanhar suas inscrições.</p>
+<div class="container my-5">
+    <h1 class="text-center text-gold fw-bold">Painel do Candidato</h1>
+    <p class="text-center">Aqui você pode acompanhar suas inscrições em vagas de emprego.</p>
+
+    {% if inscricoes %}
+        <div class="row">
+            {% for inscricao in inscricoes %}
+                <div class="col-md-6 mb-4">
+                    <div class="card border-gold bg-black text-gold shadow-sm">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">{{ inscricao.vaga.titulo }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Empresa:</strong> {{ inscricao.vaga.empresa }}</p>
+                            <p><strong>Descrição:</strong> {{ inscricao.vaga.descricao|truncatechars:100 }}</p>
+                            <p><strong>Status da Inscrição:</strong> Pendente</p> <!-- Ajustar caso tenha lógica para status -->
+                        </div>
+                        <div class="card-footer d-flex justify-content-between">
+                            <a href="{% url 'detalhes_vaga' inscricao.vaga.id %}" class="btn btn-gold btn-sm">Ver Vaga</a>
+                            <a href="{% url 'excluir_inscricao' inscricao.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir esta inscrição?')">Cancelar Inscrição</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center my-4">
+            <p class="text-center">Você ainda não se candidatou a nenhuma vaga.</p>
+            <a href="{% url 'listar_vagas' %}" class="btn btn-gold">Explorar Vagas</a>
+        </div>
+    {% endif %}
 </div>
 {% endblock %}
+
