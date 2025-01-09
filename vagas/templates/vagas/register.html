@@ -1,33 +1,13 @@
-{% extends 'vagas/base.html' %}
+{% extends "vagas/base.html" %}
+
 
 {% block content %}
-<section class="py-5 bg-black text-gold">
-    <div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
-        <div class="card bg-dark text-gold p-4 border-gold shadow-lg" style="width: 30rem;">
-            <h2 class="text-center fw-bold mb-4">Escolha o Tipo de Cadastro</h2>
-
-            <!-- Opções de cadastro -->
-            <div class="d-flex justify-content-center mb-4">
-                <a href="{% url 'cadastro_candidato' %}" class="btn btn-primary mx-2">
-                    Sou Candidato
-                </a>
-                <a href="{% url 'cadastro_empresa' %}" class="btn btn-secondary mx-2">
-                    Sou Empresa
-                </a>
-            </div>
-
-            <!-- Link para login -->
-            <p class="text-center mt-3">
-                Já tem uma conta? 
-                <a href="{% url 'login' %}" class="text-gold text-decoration-none fw-bold">Faça login aqui</a>
-            </p>
-        </div>
-    </div>
-</section>
+<div class="container mt-5">
+    <h2>Registrar-se</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Registrar</button>
+    </form>
+</div>
 {% endblock %}
-
-
-
-
-
-

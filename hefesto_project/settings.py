@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -48,12 +49,15 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# Modelo de usuário personalizado
+AUTH_USER_MODEL = 'vagas.Usuario'
+
 ROOT_URLCONF = 'hefesto_project.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # Diretório principal para templates
+        'DIRS': [BASE_DIR / 'vagas' / 'templates'],  # Caminho para os templates
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -114,7 +118,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Configurações de autenticação
 LOGIN_URL = '/login/'  # Página de login
 LOGIN_REDIRECT_URL = '/'  # Redireciona após login
-LOGOUT_REDIRECT_URL = '/login/'  # Redireciona após logout
+LOGOUT_REDIRECT_URL = '/'  # Redireciona após logout
 
 # Configurações de segurança para produção
 if not DEBUG:
@@ -127,7 +131,6 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = True
 
 # Configuração de mensagens
-from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
     messages.DEBUG: 'alert-secondary',
     messages.INFO: 'alert-info',
@@ -135,6 +138,10 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert-warning',
     messages.ERROR: 'alert-danger',
 }
+
+
+
+
 
 
 

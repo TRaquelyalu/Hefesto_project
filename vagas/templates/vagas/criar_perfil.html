@@ -1,13 +1,12 @@
-<!-- criar_perfil.html -->
 {% extends 'vagas/base.html' %}
 
 {% block content %}
 <div class="container mt-5">
-    <h1>Criar Perfil</h1>
+    <h1 class="text-center">Complete seu Perfil</h1>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Salvar</button>
+        <button type="submit" class="btn btn-success w-100">Salvar</button>
     </form>
 </div>
 {% endblock %}
