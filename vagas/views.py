@@ -9,7 +9,8 @@ from .models import Vaga, Inscricao, Profile  # Certifique-se de incluir Profile
 
 # Página inicial
 def index(request):
-    return render(request, 'vagas/index.html')
+    vagas = Vaga.objects.all()
+    return render(request, 'vagas/index.html', {'vagas': vagas})
 
 # Registro de usuários
 def register(request):
@@ -126,6 +127,23 @@ def contato(request):
 
 def termos_de_uso(request):
     return render(request, 'vagas/termos_de_uso.html')
+
+def listar_vagas(request):
+    vagas = Vaga.objects.all()
+    
+    # Filtros
+    tipo_de_vaga = request.GET.get('tipo_de_vaga')
+    localizacao = request.GET.get('localizacao')
+    status = request.GET.get('status')
+
+    if tipo_de_vaga:
+        vagas = vagas.filter(tipo_de_vaga=tipo_de_vaga)
+    if localizacao:
+        vagas = vagas.filter(localizacao__icontains=localizacao)
+    if status:
+        vagas = vagas.filter(status=status)
+
+    return render(request, 'vagas/listar_vagas.html', {'vagas': vagas})
 
 
 
