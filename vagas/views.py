@@ -91,18 +91,23 @@ def detalhes_vaga(request, vaga_id):
     return render(request, 'vagas/detalhes_vaga.html', {'vaga': vaga})
 
 # Candidatar-se a uma vaga
-@login_required
 def candidatar_vaga(request, vaga_id):
+    if not request.user.is_authenticated:
+        messages.error(request, "Você precisa estar logado para se candidatar a uma vaga.")
+        return redirect('login')
+
+    # Obtenha a vaga e o perfil do usuário
     vaga = get_object_or_404(Vaga, id=vaga_id)
-    profile = getattr(request.user, 'profile', None)
+    profile = request.user.profile
 
-    if not profile:
-        messages.error(request, "Por favor, complete seu perfil antes de se candidatar.")
-        return redirect('criar_perfil')
+    # Verifique se o usuário já se candidatou à vaga
+    if Inscricao.objects.filter(usuario=profile, vaga=vaga).exists():
+        messages.warning(request, "Você já se candidatou a esta vaga.")
+    else:
+        Inscricao.objects.create(usuario=profile, vaga=vaga)
+        messages.success(request, "Candidatura realizada com sucesso!")
 
-    Inscricao.objects.get_or_create(usuario=profile, vaga=vaga)
-    messages.success(request, "Candidatura realizada com sucesso!")
-    return HttpResponseRedirect(reverse('listar_vagas'))
+    return redirect('index')
 
 # Criar perfil
 @login_required
@@ -162,8 +167,21 @@ def termos_de_uso(request):
 # Perfil do usuário
 @login_required
 def meu_perfil(request):
-    user = request.user
-    return render(request, 'vagas/meu_perfil.html', {'user': user})
+    profile = request.user.profile
+    if request.method == "POST":
+        profile.nome_completo = request.POST.get("nome_completo", "")
+        profile.telefone = request.POST.get("telefone", "")
+        profile.objetivo = request.POST.get("objetivo", "")
+        profile.formacao = request.POST.get("formacao", "")
+        profile.experiencia = request.POST.get("experiencia", "")
+        profile.habilidades = request.POST.get("habilidades", "")
+        profile.idiomas = request.POST.get("idiomas", "")
+        profile.certificacoes = request.POST.get("certificacoes", "")
+        profile.links = request.POST.get("links", "")
+        profile.save()
+        messages.success(request, "Perfil atualizado com sucesso!")
+        return redirect('meu_perfil')
+    return render(request, 'vagas/meu_perfil.html', {'user': request.user})
 
 # Minhas candidaturas
 @login_required

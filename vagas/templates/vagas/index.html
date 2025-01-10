@@ -46,35 +46,62 @@
     </button>
 </div>
 
-<!-- Vagas Disponíveis -->
+<!-- Vagas Disponíveis em Carrossel -->
 <section class="bg-black text-white py-5">
     <div class="container">
         <h2 class="text-center fw-bold mb-4">Vagas Disponíveis</h2>
-        <div class="row">
-            {% if vagas %}
-                {% for vaga in vagas %}
-                    <div class="col-md-4 mb-4">
-                        <div class="card bg-dark text-light h-100">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ vaga.titulo }}</h5>
-                                <p><strong>Descrição:</strong> {{ vaga.descricao|truncatechars:100 }}</p>
-                                <p><strong>Localização:</strong> {{ vaga.localizacao }}</p>
-                                <p><strong>Salário:</strong> R$ {{ vaga.salario }}</p>
-                                <p><strong>Tipo:</strong> {{ vaga.tipo_de_vaga }}</p>
-                                <p><strong>Status:</strong> {{ vaga.get_status_display }}</p>
-                            </div>
-                            <div class="card-footer">
-                                <a href="{% url 'detalhes_vaga' vaga.id %}" class="btn btn-outline-light btn-sm">Detalhes</a>
+        <div id="vagasCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                {% if vagas %}
+                    {% for vaga in vagas %}
+                        {% if forloop.counter0|divisibleby:3 %}
+                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                <div class="row">
+                        {% endif %}
+                        
+                        <div class="col-md-4">
+                            <div class="card bg-dark text-light h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ vaga.titulo }}</h5>
+                                    <p><strong>Descrição:</strong> {{ vaga.descricao|truncatechars:100 }}</p>
+                                    <p><strong>Localização:</strong> {{ vaga.localizacao }}</p>
+                                    <p><strong>Salário:</strong> R$ {{ vaga.salario }}</p>
+                                    <p><strong>Tipo:</strong> {{ vaga.tipo_de_vaga }}</p>
+                                    <p><strong>Status:</strong> {{ vaga.get_status_display }}</p>
+                                </div>
+                                <div class="card-footer d-flex justify-content-between">
+                                    <a href="{% url 'detalhes_vaga' vaga.id %}" class="btn btn-outline-light btn-sm">Detalhes</a>
+                                    {% if user.is_authenticated %}
+                                        <a href="{% url 'candidatar_vaga' vaga.id %}" class="btn btn-gold btn-sm">Candidatar-se</a>
+                                    {% else %}
+                                        <a href="{% url 'login' %}" class="btn btn-gold btn-sm">Faça login para candidatar-se</a>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <p class="text-center">Nenhuma vaga disponível no momento. Volte em breve!</p>
-            {% endif %}
+
+                        {% if forloop.counter|divisibleby:3 or forloop.last %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <p class="text-center">Nenhuma vaga disponível no momento. Volte em breve!</p>
+                {% endif %}
+            </div>
+            <!-- Controles do carrossel -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#vagasCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Anterior</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#vagasCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Próximo</span>
+            </button>
         </div>
     </div>
 </section>
+
 
 <!-- Depoimentos -->
 <section class="bg-black text-gold py-5">
@@ -104,6 +131,7 @@
 </section>
 
 {% endblock %}
+
 
 
 

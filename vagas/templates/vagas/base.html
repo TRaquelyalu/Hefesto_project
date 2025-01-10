@@ -58,18 +58,26 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
+                    <li class="nav-item me-3">
                         <a class="nav-link" href="{% url 'listar_vagas' %}">Vagas</a>
                     </li>
                     {% if user.is_authenticated %}
-                        <li class="nav-item">
+                        <li class="nav-item me-3">
+                            <a class="nav-link" href="{% url 'meu_perfil' %}">Meu Perfil</a>
+                        </li>
+                        <li class="nav-item me-3">
                             <a class="nav-link" href="{% url 'minhas_candidaturas' %}">Minhas Candidaturas</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'meu_perfil' %}">Meu Perfil          </a> {{ user.first_name|default:"Usuário" }}</a>
+                        <li class="nav-item dropdown me-3">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Bem-vindo, {{ user.first_name|default:user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="{% url 'logout' %}">Sair</a></li>
+                            </ul>
                         </li>
                     {% else %}
-                        <li class="nav-item">
+                        <li class="nav-item me-3">
                             <a class="nav-link" href="{% url 'login' %}">Login</a>
                         </li>
                     {% endif %}
@@ -77,7 +85,6 @@
             </div>
         </div>
     </nav>
-    
     
 
     <!-- Mensagens de Feedback -->
