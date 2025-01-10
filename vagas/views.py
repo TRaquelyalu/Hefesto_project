@@ -1,3 +1,4 @@
+from django.db import IntegrityError
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
@@ -5,7 +6,7 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from .forms import ProfileForm, UsuarioCreationForm, VagaForm
-from .models import Vaga, Inscricao, Profile  # Certifique-se de incluir Profile aqui
+from .models import Vaga, Inscricao, Profile, Usuario  # Substituído User por Usuario
 
 # Página inicial
 def index(request):
@@ -14,20 +15,37 @@ def index(request):
 
 # Registro de usuários
 def register(request):
-    if request.method == 'POST':
-        form = UsuarioCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            # Criação automática de perfil
-            Profile.objects.create(user=user)  # Certifique-se de que o modelo Profile está funcionando corretamente
-            login(request, user)
-            messages.success(request, "Usuário cadastrado com sucesso!")
-            return redirect('index')
-        else:
-            messages.error(request, "Erro no cadastro. Verifique os dados.")
-    else:
-        form = UsuarioCreationForm()
-    return render(request, 'vagas/register.html', {'form': form})
+    if request.method == "POST":
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+        full_name = request.POST.get("full_name")
+        password = request.POST.get("password")
+        confirm_password = request.POST.get("confirm_password")
+
+        if password != confirm_password:
+            messages.error(request, "As senhas não coincidem.")
+            return redirect("register")
+
+        if Usuario.objects.filter(username=username).exists():
+            messages.error(request, "Nome de usuário já está em uso.")
+            return redirect("register")
+
+        if Usuario.objects.filter(email=email).exists():
+            messages.error(request, "Email já está em uso.")
+            return redirect("register")
+
+        try:
+            user = Usuario.objects.create_user(username=username, email=email, password=password)
+            user.first_name = full_name
+            user.save()
+            messages.success(request, "Conta criada com sucesso!")
+            return redirect("login")
+        except IntegrityError:
+            messages.error(request, "Erro ao criar a conta. Tente novamente.")
+            return redirect("register")
+
+    return render(request, "vagas/register.html")
+
 
 # Login
 def login_view(request):
@@ -52,6 +70,19 @@ def custom_logout(request):
 # Listar vagas
 def listar_vagas(request):
     vagas = Vaga.objects.all()
+    
+    # Filtros
+    tipo_de_vaga = request.GET.get('tipo_de_vaga')
+    localizacao = request.GET.get('localizacao')
+    status = request.GET.get('status')
+
+    if tipo_de_vaga:
+        vagas = vagas.filter(tipo_de_vaga=tipo_de_vaga)
+    if localizacao:
+        vagas = vagas.filter(localizacao__icontains=localizacao)
+    if status:
+        vagas = vagas.filter(status=status)
+
     return render(request, 'vagas/listar_vagas.html', {'vagas': vagas})
 
 # Detalhes da vaga
@@ -128,25 +159,17 @@ def contato(request):
 def termos_de_uso(request):
     return render(request, 'vagas/termos_de_uso.html')
 
-def listar_vagas(request):
-    vagas = Vaga.objects.all()
-    
-    # Filtros
-    tipo_de_vaga = request.GET.get('tipo_de_vaga')
-    localizacao = request.GET.get('localizacao')
-    status = request.GET.get('status')
+# Perfil do usuário
+@login_required
+def meu_perfil(request):
+    user = request.user
+    return render(request, 'vagas/meu_perfil.html', {'user': user})
 
-    if tipo_de_vaga:
-        vagas = vagas.filter(tipo_de_vaga=tipo_de_vaga)
-    if localizacao:
-        vagas = vagas.filter(localizacao__icontains=localizacao)
-    if status:
-        vagas = vagas.filter(status=status)
-
-    return render(request, 'vagas/listar_vagas.html', {'vagas': vagas})
-
-
-
+# Minhas candidaturas
+@login_required
+def minhas_candidaturas(request):
+    inscricoes = Inscricao.objects.filter(usuario=request.user.profile)
+    return render(request, 'vagas/minhas_candidaturas.html', {'inscricoes': inscricoes})
 
 
 

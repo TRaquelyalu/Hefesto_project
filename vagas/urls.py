@@ -15,7 +15,9 @@ urlpatterns = [
     # Perfil
     path('perfil/criar/', views.criar_perfil, name='criar_perfil'),
     path('perfil/editar/', views.editar_perfil, name='editar_perfil'),
-
+    path('meu-perfil/', views.meu_perfil, name='meu_perfil'),
+    path('minhas-candidaturas/', views.minhas_candidaturas, name='minhas_candidaturas'),  # Adicionado
+    
     # Autenticação
     path('register/', views.register, name='register'),
     path('login/', views.login_view, name='login'),
@@ -25,6 +27,7 @@ urlpatterns = [
     path('sobre-nos/', views.sobre_nos, name='sobre_nos'),
     path('contato/', views.contato, name='contato'),
     path('termos-de-uso/', views.termos_de_uso, name='termos_de_uso'),
+      
 ]
 
 

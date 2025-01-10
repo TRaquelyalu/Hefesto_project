@@ -1,24 +1,24 @@
 {% extends "vagas/base.html" %}
 
-
-
 {% block content %}
-<div class="login-container">
-    <h2 class="text-center">Login</h2>
-    <form method="post" action="{% url 'login' %}">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label for="id_username" class="form-label">Usuário</label>
-            <input type="text" name="username" id="id_username" class="form-control" placeholder="Digite seu usuário" required>
+<div class="container d-flex justify-content-center align-items-center" style="height: 80vh;">
+    <div class="card bg-dark text-light border-gold" style="width: 400px; padding: 20px;">
+        <h1 class="text-center mb-4" style="color: #FFD700;">Login</h1>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="username" class="form-label" style="color: #FFD700;">Usuário</label>
+                <input type="text" id="username" name="username" class="form-control" placeholder="Digite seu usuário" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label" style="color: #FFD700;">Senha</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Digite sua senha" required>
+            </div>
+            <button type="submit" class="btn btn-warning w-100">Entrar</button>
+        </form>
+        <div class="text-center mt-3">
+            <p>Não tem uma conta? <a href="{% url 'register' %}" class="text-warning">Registrar-se</a></p>
         </div>
-        <div class="mb-3">
-            <label for="id_password" class="form-label">Senha</label>
-            <input type="password" name="password" id="id_password" class="form-control" placeholder="Digite sua senha" required>
-        </div>
-        <button type="submit" class="btn btn-primary w-100">Entrar</button>
-    </form>
-    <div class="mt-4 text-center">
-        <p>Não tem uma conta? <a href="{% url 'register' %}" class="link-warning">Registrar-se</a></p>
     </div>
 </div>
 {% endblock %}

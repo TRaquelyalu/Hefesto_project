@@ -1,81 +1,59 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}HefestoTec{% endblock %}</title>
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <!-- CSS personalizado -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
     <style>
-        /* Estilo adicional */
         .footer-link {
             color: #FFD700;
             text-decoration: none;
         }
+
         .footer-link:hover {
             text-decoration: underline;
         }
+
         .nav-link {
             color: #FFD700 !important;
             font-weight: bold;
         }
+
         .nav-link:hover {
             color: #FFC700 !important;
         }
+
         .navbar-brand {
             color: #FFD700 !important;
         }
+
         .navbar-brand:hover {
             color: #FFC700 !important;
         }
+
         body {
             background-color: #000;
             color: #fff;
         }
-        .login-container {
-            background-color: #1a1a1a;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            width: 300px;
-            margin: 100px auto;
-            color: #fff;
-        }
-        .login-container h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #FFD700;
-            display: inline-block;
-            padding-bottom: 5px;
-        }
-        .form-label {
-            color: #FFD700;
-        }
-        .btn-primary {
-            background-color: #FFD700;
-            border: none;
-            font-weight: bold;
-        }
-        .btn-primary:hover {
-            background-color: #FFC700;
-        }
-        a {
-            color: #FFD700;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
     </style>
 </head>
+
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand" href="{% url 'index' %}">HefestoTec</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -85,7 +63,10 @@
                     </li>
                     {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'logout' %}">Sair ({{ user.username }})</a>
+                            <a class="nav-link" href="{% url 'minhas_candidaturas' %}">Minhas Candidaturas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'meu_perfil' %}">Meu Perfil          </a> {{ user.first_name|default:"Usuário" }}</a>
                         </li>
                     {% else %}
                         <li class="nav-item">
@@ -96,20 +77,22 @@
             </div>
         </div>
     </nav>
+    
+    
 
     <!-- Mensagens de Feedback -->
     <div class="container mt-3">
         {% if messages %}
-            <div class="row">
-                <div class="col-12">
-                    {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                            {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% endfor %}
+        <div class="row">
+            <div class="col-12">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
+                {% endfor %}
             </div>
+        </div>
         {% endif %}
     </div>
 
@@ -140,7 +123,15 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
+
+
+
+
+
+
+
 
 
 

@@ -1,0 +1,49 @@
+{% extends 'vagas/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Meu Perfil</h1>
+
+    <!-- Formulário para atualizar dados pessoais -->
+    <div class="card bg-dark text-light border-gold mb-4">
+        <div class="card-body">
+            <h3 class="card-title">Dados Pessoais</h3>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-gold">Atualizar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Formulário adicional para CPF, Telefone e Data de Nascimento -->
+    <div class="card bg-dark text-light border-gold mb-4">
+        <div class="card-body">
+            <h3 class="card-title">Informações Adicionais</h3>
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="cpf" class="form-label">CPF:</label>
+                    <input type="text" id="cpf" name="cpf" class="form-control" 
+                           value="{{ user.profile.cpf|default:'' }}" placeholder="Digite seu CPF">
+                </div>
+                <div class="mb-3">
+                    <label for="telefone" class="form-label">Telefone:</label>
+                    <input type="text" id="telefone" name="telefone" class="form-control" 
+                           value="{{ user.profile.telefone|default:'' }}" placeholder="Digite seu telefone">
+                </div>
+                <div class="mb-3">
+                    <label for="data_nascimento" class="form-label">Data de Nascimento:</label>
+                    <input type="date" id="data_nascimento" name="data_nascimento" class="form-control" 
+                           value="{{ user.profile.data_nascimento|default:'' }}">
+                </div>
+                <button type="submit" class="btn btn-gold">Atualizar</button>
+            </form>
+        </div>
+    </div>
+
+    
+    </div>
+</div>
+{% endblock %}
+
