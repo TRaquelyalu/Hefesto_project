@@ -10,7 +10,8 @@ urlpatterns = [
     path('vagas/<int:vaga_id>/detalhes/', views.detalhes_vaga, name='detalhes_vaga'),  # Detalhes de uma vaga
     path('vagas/<int:vaga_id>/candidatar/', views.candidatar_vaga, name='candidatar_vaga'),  # Candidatar-se a uma vaga
     path('vagas/criar/', views.criar_vaga, name='criar_vaga'),  # Criar nova vaga
-    path('vagas/<int:vaga_id>/candidatos/', views.listar_candidatos_por_vaga, name='listar_candidatos_por_vaga'),  # Listar candidatos por vaga
+    path('vaga/<int:vaga_id>/candidatos/', views.listar_candidatos_por_vaga, name='listar_candidatos_por_vaga'),
+
 
     # Perfil do usuário
     path('perfil/criar/', views.criar_perfil, name='criar_perfil'),  # Criar perfil

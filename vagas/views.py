@@ -160,11 +160,12 @@ def criar_vaga(request):
         form = VagaForm()
 
     return render(request, 'vagas/criar_vaga.html', {'form': form})
+
 # Listar candidatos por vaga
 @login_required
 def listar_candidatos_por_vaga(request, vaga_id):
     vaga = get_object_or_404(Vaga, id=vaga_id)
-    candidaturas = Candidatura.objects.filter(vaga=vaga)
+    candidaturas = Candidatura.objects.filter(vaga=vaga).select_related('candidato')
     return render(request, 'vagas/listar_candidatos_por_vaga.html', {'vaga': vaga, 'candidaturas': candidaturas})
 
 @login_required

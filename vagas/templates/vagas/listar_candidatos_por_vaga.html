@@ -2,14 +2,14 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h1 class="text-center mb-4">Candidatos para a vaga: {{ vaga.titulo }}</h1>
+    <h1 class="text-center mb-4">Candidatos para a Vaga: {{ vaga.titulo }}</h1>
+
     {% if candidaturas %}
         <ul class="list-group">
             {% for candidatura in candidaturas %}
-                <li class="list-group-item bg-dark text-light">
+                <li class="list-group-item">
                     <strong>Nome:</strong> {{ candidatura.candidato.username }}<br>
-                    <strong>Email:</strong> {{ candidatura.candidato.email }}<br>
-                    <strong>Data da Candidatura:</strong> {{ candidatura.data_candidatura|date:"d/m/Y H:i" }}
+                    <strong>Email:</strong> {{ candidatura.candidato.email }}
                 </li>
             {% endfor %}
         </ul>
@@ -18,3 +18,4 @@
     {% endif %}
 </div>
 {% endblock %}
+
