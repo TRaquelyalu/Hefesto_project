@@ -1,3 +1,4 @@
+from itertools import count
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import login, authenticate, logout
@@ -7,6 +8,7 @@ from django.db.models import Q  # Import necessário para filtros de busca
 from .forms import ProfileForm, UsuarioCreationForm, VagaForm
 from .models import Vaga, Candidatura, Profile, Usuario
 from .forms import VagaForm
+from .models import Vaga, Candidatura
 
 
 # Página inicial: exibe todas as vagas disponíveis
@@ -17,10 +19,12 @@ def index(request):
 
 # Listar vagas disponíveis
 def listar_vagas(request):
-    query = request.GET.get('q')  # Busca por título ou descrição
-    localizacao = request.GET.get('localizacao')  # Filtro por localização
-    tipo = request.GET.get('tipo')  # Filtro por tipo
+    # Captura os filtros enviados pelo usuário
+    query = request.GET.get('q', '').strip()  # Busca por título ou descrição
+    localizacao = request.GET.get('localizacao', '').strip()  # Filtro por localização
+    tipo = request.GET.get('tipo', '').strip()  # Filtro por tipo
 
+    # Busca todas as vagas inicialmente
     vagas = Vaga.objects.all()
 
     # Aplicar filtros se os campos estiverem preenchidos
@@ -31,9 +35,9 @@ def listar_vagas(request):
     if tipo:
         vagas = vagas.filter(tipo__icontains=tipo)
 
+    # Renderiza a página de listagem de vagas com os filtros aplicados
+    
     return render(request, 'vagas/listar_vagas.html', {'vagas': vagas})
-
-
 # Registro de usuários
 def register(request):
     if request.method == "POST":
@@ -228,3 +232,26 @@ def termos_de_uso(request):
     Exibe os termos e condições da plataforma.
     """
     return render(request, 'vagas/termos_de_uso.html')
+
+@login_required
+def listar_candidaturas(request):
+    query = request.GET.get('q')  # Filtro por título da vaga
+    candidaturas = Candidatura.objects.select_related('vaga', 'candidato')
+
+    if query:
+        candidaturas = candidaturas.filter(vaga__titulo__icontains=query)
+
+    candidaturas_por_vaga = (
+        candidaturas.values('vaga__titulo', 'vaga__id')
+        .annotate(total=count('id'))
+        .order_by('vaga__titulo')
+    )
+
+    return render(request, 'vagas/listar_candidaturas.html', {
+        'candidaturas': candidaturas,
+        'candidaturas_por_vaga': candidaturas_por_vaga,
+    })
+
+def relatorio_candidaturas(request):
+    vagas = Vaga.objects.prefetch_related('candidatura_set')  # Carrega vagas e candidaturas associadas
+    return render(request, 'vagas/relatorio_candidaturas.html', {'vagas': vagas})

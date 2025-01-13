@@ -2,19 +2,36 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h1 class="text-center mb-4">Candidatos para a Vaga: {{ vaga.titulo }}</h1>
+    <h1 class="text-center mb-4 text-warning">Relatório de Candidaturas</h1>
 
-    {% if candidaturas %}
-        <ul class="list-group">
-            {% for candidatura in candidaturas %}
-                <li class="list-group-item">
-                    <strong>Nome:</strong> {{ candidatura.candidato.username }}<br>
-                    <strong>Email:</strong> {{ candidatura.candidato.email }}
-                </li>
-            {% endfor %}
-        </ul>
+    <!-- Listagem de Vagas -->
+    {% if vagas %}
+        {% for vaga in vagas %}
+            <div class="card mb-4 bg-dark text-light border-warning">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        {{ vaga.titulo }} - <span class="text-warning">{{ vaga.total_candidaturas }} candidaturas</span>
+                    </h4>
+                    <p><strong>Localização:</strong> {{ vaga.localizacao }}</p>
+                </div>
+                <div class="card-body">
+                    {% if vaga.candidatura_set.all %}
+                        <ul class="list-group">
+                            {% for candidatura in vaga.candidatura_set.all %}
+                                <li class="list-group-item bg-dark text-light">
+                                    <strong>Nome:</strong> {{ candidatura.candidato.username }}<br>
+                                    <strong>Email:</strong> {{ candidatura.candidato.email }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-light">Nenhuma candidatura para esta vaga.</p>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
     {% else %}
-        <p class="text-center">Nenhum candidato se inscreveu para esta vaga.</p>
+        <p class="text-center text-light">Nenhuma vaga cadastrada no momento.</p>
     {% endif %}
 </div>
 {% endblock %}

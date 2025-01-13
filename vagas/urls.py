@@ -11,6 +11,8 @@ urlpatterns = [
     path('vagas/<int:vaga_id>/candidatar/', views.candidatar_vaga, name='candidatar_vaga'),  # Candidatar-se a uma vaga
     path('vagas/criar/', views.criar_vaga, name='criar_vaga'),  # Criar nova vaga
     path('vaga/<int:vaga_id>/candidatos/', views.listar_candidatos_por_vaga, name='listar_candidatos_por_vaga'),
+    path('candidaturas/', views.listar_candidaturas, name='listar_candidaturas'),
+    path('relatorio/candidaturas/', views.relatorio_candidaturas, name='relatorio_candidaturas'),
 
 
     # Perfil do usuário
