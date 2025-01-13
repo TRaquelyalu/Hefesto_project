@@ -24,6 +24,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'vagas',  # Aplicativo principal do projeto
+    'crispy_forms',          # Django Crispy Forms
+    'crispy_bootstrap5',     # Estilo Bootstrap 5
 ]
 
 # Middlewares
@@ -117,7 +119,8 @@ if not DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
 
-
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 
 

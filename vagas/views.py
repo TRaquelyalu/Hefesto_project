@@ -9,7 +9,9 @@ from .forms import ProfileForm, UsuarioCreationForm, VagaForm
 from .models import Vaga, Candidatura, Profile, Usuario
 from .forms import VagaForm
 from .models import Vaga, Candidatura
-
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 
 # Página inicial: exibe todas as vagas disponíveis
 def index(request):
@@ -252,6 +254,62 @@ def listar_candidaturas(request):
         'candidaturas_por_vaga': candidaturas_por_vaga,
     })
 
+from django.db.models import Count, Q
+
 def relatorio_candidaturas(request):
-    vagas = Vaga.objects.prefetch_related('candidatura_set')  # Carrega vagas e candidaturas associadas
+    # Obter o filtro do formulário (busca por título ou quantidade)
+    query = request.GET.get('q')
+    
+    # Anotar o total de candidaturas para cada vaga
+    vagas = Vaga.objects.annotate(
+        total_candidaturas=Count('candidatura')
+    )
+
+    if query:
+        try:
+            # Tentar converter a consulta em um número
+            query_as_number = int(query)
+            vagas = vagas.filter(total_candidaturas=query_as_number)
+        except ValueError:
+            # Caso contrário, filtrar pelo título da vaga
+            vagas = vagas.filter(titulo__icontains=query)
+
     return render(request, 'vagas/relatorio_candidaturas.html', {'vagas': vagas})
+
+# Apenas administradores podem acessar
+@login_required
+@staff_member_required
+def criar_vaga(request):
+    if request.method == "POST":
+        form = VagaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Vaga criada com sucesso!")
+            return redirect('listar_vagas')
+        else:
+            messages.error(request, "Erro ao salvar a vaga. Verifique os dados.")
+    else:
+        form = VagaForm()
+
+    return render(request, 'vagas/criar_vaga.html', {'form': form})
+
+@login_required
+@staff_member_required
+def listar_candidatos_por_vaga(request, vaga_id):
+    vaga = get_object_or_404(Vaga, id=vaga_id)
+    candidaturas = Candidatura.objects.filter(vaga=vaga)
+    return render(request, 'vagas/listar_candidatos_por_vaga.html', {'vaga': vaga, 'candidaturas': candidaturas})
+
+@login_required
+@staff_member_required
+def relatorio_candidaturas(request):
+    vagas = Vaga.objects.all()
+    relatorio = []
+    for vaga in vagas:
+        candidaturas = Candidatura.objects.filter(vaga=vaga)
+        relatorio.append({
+            'vaga': vaga,
+            'quantidade': candidaturas.count(),
+            'candidatos': candidaturas
+        })
+    return render(request, 'vagas/relatorio_candidaturas.html', {'relatorio': relatorio})

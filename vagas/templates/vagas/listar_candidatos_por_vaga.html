@@ -2,20 +2,23 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h1 class="text-center mb-4 text-warning">Relatório de Candidaturas</h1>
+    <h1 class="text-center mb-4 text-warning">Relatório de Candidaturas por Vaga</h1>
 
     <!-- Listagem de Vagas -->
     {% if vagas %}
         {% for vaga in vagas %}
             <div class="card mb-4 bg-dark text-light border-warning">
-                <div class="card-header">
-                    <h4 class="mb-0">
-                        {{ vaga.titulo }} - <span class="text-warning">{{ vaga.total_candidaturas }} candidaturas</span>
-                    </h4>
-                    <p><strong>Localização:</strong> {{ vaga.localizacao }}</p>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="mb-0">{{ vaga.titulo }}</h4>
+                        <p class="mb-0"><strong>Localização:</strong> {{ vaga.localizacao }}</p>
+                        <p class="mb-0"><strong>Total de Candidaturas:</strong> 
+                            <span class="text-warning">{{ vaga.total_candidaturas }}</span>
+                        </p>
+                    </div>
                 </div>
                 <div class="card-body">
-                    {% if vaga.candidatura_set.all %}
+                    {% if vaga.candidatura_set.exists %}
                         <ul class="list-group">
                             {% for candidatura in vaga.candidatura_set.all %}
                                 <li class="list-group-item bg-dark text-light">
@@ -35,4 +38,13 @@
     {% endif %}
 </div>
 {% endblock %}
+
+{% if user.is_staff %}
+<div class="text-center mt-4">
+    <a href="{% url 'criar_vaga' %}" class="btn btn-warning me-2">Criar Vaga</a>
+    <a href="{% url 'relatorio_candidaturas' %}" class="btn btn-warning">Relatório de Candidaturas</a>
+    <a href="{% url 'listar_candidatos_por_vaga' vaga.id %}">Ver Candidatos</a>
+
+</div>
+{% endif %}
 
