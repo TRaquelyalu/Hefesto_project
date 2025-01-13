@@ -2,11 +2,17 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h1 class="text-center">Complete seu Perfil</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-success w-100">Salvar</button>
-    </form>
+    <h1 class="text-center mb-4 text-warning">Criar Perfil</h1>
+    <div class="card bg-dark text-light p-4 border-warning shadow-lg">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-warning">Salvar</button>
+                <a href="{% url 'index' %}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
 </div>
 {% endblock %}
+

@@ -1,21 +1,23 @@
 {% extends 'vagas/base.html' %}
 
 {% block content %}
-<section class="bg-black text-gold py-5">
-    <div class="container">
-        <h1 class="text-center fw-bold mb-4">Sobre Nós</h1>
-        <p class="fs-5">
-            Bem-vindo ao <span class="fw-bold">HefestoTec</span>, sua plataforma confiável para conectar talentos excepcionais às melhores oportunidades do mercado de tecnologia.
-        </p>
-        <p class="fs-5">
-            Nosso objetivo é criar um ambiente onde empresas e candidatos possam interagir de forma eficiente, promovendo inovação e crescimento profissional.
-        </p>
-        <p class="fs-5">
-            Acreditamos que cada talento merece ser valorizado e cada empresa merece o time certo para atingir seus objetivos. Por isso, nos dedicamos a oferecer uma experiência única e personalizada.
-        </p>
-        <div class="text-center mt-5">
-            <a href="{% url 'contato' %}" class="btn btn-gold btn-lg">Entre em Contato</a>
-        </div>
-    </div>
-</section>
+<div class="container mt-5 text-light">
+    <h1 class="text-center mb-4">Sobre Nós</h1>
+    <p>
+        Bem-vindo ao HefestoTec, a plataforma que conecta talentos às melhores oportunidades na área de tecnologia.
+        Nosso objetivo é simplificar o processo de recrutamento, facilitando a busca por vagas e talentos.
+    </p>
+    <p>
+        Com o HefestoTec, você pode:
+    </p>
+    <ul>
+        <li>Encontrar vagas personalizadas para o seu perfil.</li>
+        <li>Gerenciar suas candidaturas de forma prática e eficiente.</li>
+        <li>Se conectar com empresas líderes do mercado de tecnologia.</li>
+    </ul>
+    <p>
+        Nossa missão é tornar o mercado de tecnologia mais acessível para todos, promovendo oportunidades
+        e ajudando profissionais a atingirem seus objetivos.
+    </p>
+</div>
 {% endblock %}

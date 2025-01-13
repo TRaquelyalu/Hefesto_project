@@ -2,91 +2,58 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h1 class="text-center mb-4">Lista de Vagas Disponíveis</h1>
+    <h1 class="text-center mb-4 text-warning">Vagas Disponíveis</h1>
 
-    <!-- Filtros e Busca -->
+    <!-- Formulário de Busca -->
     <form method="get" class="mb-4">
         <div class="row">
-            <!-- Tipo de Vaga -->
             <div class="col-md-4">
-                <label for="tipo_de_vaga" class="form-label text-light">Tipo de Vaga:</label>
-                <select name="tipo_de_vaga" id="tipo_de_vaga" class="form-select">
-                    <option value="">Todos</option>
-                    <option value="CLT" {% if request.GET.tipo_de_vaga == "CLT" %}selected{% endif %}>CLT</option>
-                    <option value="Freelance" {% if request.GET.tipo_de_vaga == "Freelance" %}selected{% endif %}>Freelance</option>
-                    <option value="Estágio" {% if request.GET.tipo_de_vaga == "Estágio" %}selected{% endif %}>Estágio</option>
-                </select>
+                <input type="text" name="q" class="form-control bg-dark text-light"
+                       placeholder="Buscar por título ou descrição" value="{{ request.GET.q }}">
             </div>
-
-            <!-- Localização -->
             <div class="col-md-4">
-                <label for="localizacao" class="form-label text-light">Localização:</label>
-                <input type="text" name="localizacao" id="localizacao" placeholder="Cidade ou remoto"
-                       class="form-control"
-                       value="{{ request.GET.localizacao }}">
+                <input type="text" name="localizacao" class="form-control bg-dark text-light"
+                       placeholder="Filtrar por localização" value="{{ request.GET.localizacao }}">
             </div>
-
-            <!-- Status -->
             <div class="col-md-4">
-                <label for="status" class="form-label text-light">Status:</label>
-                <select name="status" id="status" class="form-select">
-                    <option value="">Todos</option>
-                    <option value="Aberta" {% if request.GET.status == "Aberta" %}selected{% endif %}>Aberta</option>
-                    <option value="Fechada" {% if request.GET.status == "Fechada" %}selected{% endif %}>Fechada</option>
+                <select name="tipo" class="form-select bg-dark text-light">
+                    <option value="">Filtrar por tipo</option>
+                    <option value="Presencial" {% if request.GET.tipo == "Presencial" %}selected{% endif %}>Presencial</option>
+                    <option value="Remoto" {% if request.GET.tipo == "Remoto" %}selected{% endif %}>Remoto</option>
+                    <option value="Híbrido" {% if request.GET.tipo == "Híbrido" %}selected{% endif %}>Híbrido</option>
                 </select>
             </div>
         </div>
-
-        <!-- Busca por palavras-chave -->
-        <div class="row mt-3">
-            <div class="col-md-12">
-                <label for="q" class="form-label text-light">Busca:</label>
-                <input type="text" name="q" id="q" placeholder="Buscar por palavras-chave..."
-                       class="form-control"
-                       value="{{ request.GET.q }}">
-            </div>
-        </div>
-
-        <!-- Botão de Filtrar -->
-        <div class="mt-3 text-center">
-            <button type="submit" class="btn btn-gold">Filtrar</button>
+        <div class="d-flex justify-content-end mt-3">
+            <button type="submit" class="btn btn-warning">Filtrar</button>
+            <a href="{% url 'listar_vagas' %}" class="btn btn-secondary ms-2">Limpar</a>
         </div>
     </form>
 
-    <!-- Lista de Vagas -->
-    {% if vagas %}
-        <div class="row">
+    <!-- Listagem de Vagas -->
+    <div class="row">
+        {% if vagas %}
             {% for vaga in vagas %}
-                <div class="col-md-4 mb-4">
-                    <div class="card bg-dark text-light border-gold h-100">
+                <div class="col-md-4 mb-3">
+                    <div class="card bg-dark text-light border-warning">
                         <div class="card-body">
                             <h5 class="card-title">{{ vaga.titulo }}</h5>
-                            <p><strong>Descrição:</strong> {{ vaga.descricao|truncatechars:100 }}</p>
+                            <p class="card-text">{{ vaga.descricao|truncatechars:100 }}</p>
                             <p><strong>Localização:</strong> {{ vaga.localizacao }}</p>
-                            <p><strong>Salário:</strong> R$ {{ vaga.salario }}</p>
-                            <p><strong>Tipo:</strong> {{ vaga.tipo_de_vaga }}</p>
-                            <p><strong>Status:</strong> {{ vaga.get_status_display }}</p>
-                        </div>
-                        <div class="card-footer d-flex justify-content-between">
-                            <!-- Detalhes da vaga -->
-                            <a href="{% url 'detalhes_vaga' vaga.id %}" class="btn btn-outline-light btn-sm">Detalhes</a>
-
-                            <!-- Verifica se o usuário está autenticado -->
-                            {% if user.is_authenticated %}
-                                <a href="{% url 'candidatar_vaga' vaga.id %}" class="btn btn-gold btn-sm">Candidatar-se</a>
-                            {% else %}
-                                <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm">Login para candidatar-se</a>
-                            {% endif %}
+                            <p><strong>Tipo:</strong> {{ vaga.tipo }}</p>
+                            <a href="{% url 'detalhes_vaga' vaga.id %}" class="btn btn-primary">Ver Detalhes</a>
                         </div>
                     </div>
                 </div>
             {% endfor %}
-        </div>
-    {% else %}
-        <p class="text-center text-light">Não há vagas disponíveis no momento.</p>
-    {% endif %}
+        {% else %}
+            <p class="text-center text-light">Nenhuma vaga disponível no momento.</p>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}
+
+
 
 
 

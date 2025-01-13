@@ -7,7 +7,9 @@
     <div class="container text-center">
         <h1 class="fw-bold fs-1">Bem-vindo ao HefestoTec</h1>
         <p class="fs-4">Conectando talentos às melhores oportunidades em tecnologia.</p>
-        <a href="{% url 'listar_vagas' %}" class="btn btn-gold btn-lg mt-3">Explore Vagas</a>
+        <a href="{% url 'listar_vagas' %}" class="btn btn-primary">Explore Vagas</a>
+
+
     </div>
 </section>
 
@@ -19,13 +21,6 @@
             <div class="carousel-caption bg-black-opacity p-3 rounded">
                 <h5 class="text-gold">Vagas em Destaque</h5>
                 <p class="text-white">Confira as vagas mais procuradas do momento.</p>
-            </div>
-        </div>
-        <div class="carousel-item">
-            <img src="{% static 'images/eventos-tecnologia.jpg' %}" class="d-block w-100" alt="Eventos de Tecnologia" style="max-height: 300px; object-fit: cover;">
-            <div class="carousel-caption bg-black-opacity p-3 rounded">
-                <h5 class="text-gold">Eventos de Tecnologia</h5>
-                <p class="text-white">Participe de hackathons, workshops e conferências.</p>
             </div>
         </div>
         <div class="carousel-item">
@@ -46,50 +41,48 @@
     </button>
 </div>
 
-<!-- Vagas Disponíveis em Carrossel -->
+<!-- Vagas Disponíveis -->
 <section class="bg-black text-white py-5">
     <div class="container">
         <h2 class="text-center fw-bold mb-4">Vagas Disponíveis</h2>
+        {% if not user.is_authenticated %}
+            <p class="text-center text-warning">Faça login para se candidatar às vagas!</p>
+        {% endif %}
         <div id="vagasCarousel" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
                 {% if vagas %}
                     {% for vaga in vagas %}
                         {% if forloop.counter0|divisibleby:3 %}
-                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                                <div class="row">
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <div class="row">
                         {% endif %}
-                        
                         <div class="col-md-4">
-                            <div class="card bg-dark text-light h-100">
+                            <div class="card bg-dark text-light h-100 mx-2">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ vaga.titulo }}</h5>
                                     <p><strong>Descrição:</strong> {{ vaga.descricao|truncatechars:100 }}</p>
                                     <p><strong>Localização:</strong> {{ vaga.localizacao }}</p>
                                     <p><strong>Salário:</strong> R$ {{ vaga.salario }}</p>
-                                    <p><strong>Tipo:</strong> {{ vaga.tipo_de_vaga }}</p>
-                                    <p><strong>Status:</strong> {{ vaga.get_status_display }}</p>
                                 </div>
-                                <div class="card-footer d-flex justify-content-between">
+                                <div class="card-footer">
                                     <a href="{% url 'detalhes_vaga' vaga.id %}" class="btn btn-outline-light btn-sm">Detalhes</a>
                                     {% if user.is_authenticated %}
                                         <a href="{% url 'candidatar_vaga' vaga.id %}" class="btn btn-gold btn-sm">Candidatar-se</a>
                                     {% else %}
-                                        <a href="{% url 'login' %}" class="btn btn-gold btn-sm">Faça login para candidatar-se</a>
+                                        <a href="{% url 'login' %}" class="btn btn-gold btn-sm">Faça login</a>
                                     {% endif %}
                                 </div>
                             </div>
                         </div>
-
                         {% if forloop.counter|divisibleby:3 or forloop.last %}
-                                </div>
                             </div>
+                        </div>
                         {% endif %}
                     {% endfor %}
                 {% else %}
                     <p class="text-center">Nenhuma vaga disponível no momento. Volte em breve!</p>
                 {% endif %}
             </div>
-            <!-- Controles do carrossel -->
             <button class="carousel-control-prev" type="button" data-bs-target="#vagasCarousel" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Anterior</span>
@@ -101,7 +94,6 @@
         </div>
     </div>
 </section>
-
 
 <!-- Depoimentos -->
 <section class="bg-black text-gold py-5">

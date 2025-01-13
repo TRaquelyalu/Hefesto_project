@@ -3,15 +3,36 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import HttpResponseRedirect
-from django.urls import reverse
+from django.db.models import Q  # Import necessário para filtros de busca
 from .forms import ProfileForm, UsuarioCreationForm, VagaForm
-from .models import Vaga, Inscricao, Profile, Usuario  # Substituído User por Usuario
+from .models import Vaga, Candidatura, Profile, Usuario
+from .forms import VagaForm
 
-# Página inicial
+
+# Página inicial: exibe todas as vagas disponíveis
 def index(request):
     vagas = Vaga.objects.all()
     return render(request, 'vagas/index.html', {'vagas': vagas})
+
+
+# Listar vagas disponíveis
+def listar_vagas(request):
+    query = request.GET.get('q')  # Busca por título ou descrição
+    localizacao = request.GET.get('localizacao')  # Filtro por localização
+    tipo = request.GET.get('tipo')  # Filtro por tipo
+
+    vagas = Vaga.objects.all()
+
+    # Aplicar filtros se os campos estiverem preenchidos
+    if query:
+        vagas = vagas.filter(Q(titulo__icontains=query) | Q(descricao__icontains=query))
+    if localizacao:
+        vagas = vagas.filter(localizacao__icontains=localizacao)
+    if tipo:
+        vagas = vagas.filter(tipo__icontains=tipo)
+
+    return render(request, 'vagas/listar_vagas.html', {'vagas': vagas})
+
 
 # Registro de usuários
 def register(request):
@@ -56,10 +77,11 @@ def login_view(request):
         if user:
             login(request, user)
             messages.success(request, "Login realizado com sucesso!")
-            return redirect('index')
+            return redirect(request.GET.get('next', 'index'))  # Redireciona para a página anterior
         else:
             messages.error(request, "Credenciais inválidas.")
     return render(request, 'vagas/login.html')
+
 
 # Logout
 def custom_logout(request):
@@ -67,51 +89,89 @@ def custom_logout(request):
     messages.info(request, "Logout realizado com sucesso!")
     return redirect('index')
 
-# Listar vagas
-def listar_vagas(request):
-    vagas = Vaga.objects.all()
-    
-    # Filtros
-    tipo_de_vaga = request.GET.get('tipo_de_vaga')
-    localizacao = request.GET.get('localizacao')
-    status = request.GET.get('status')
-
-    if tipo_de_vaga:
-        vagas = vagas.filter(tipo_de_vaga=tipo_de_vaga)
-    if localizacao:
-        vagas = vagas.filter(localizacao__icontains=localizacao)
-    if status:
-        vagas = vagas.filter(status=status)
-
-    return render(request, 'vagas/listar_vagas.html', {'vagas': vagas})
 
 # Detalhes da vaga
 def detalhes_vaga(request, vaga_id):
     vaga = get_object_or_404(Vaga, id=vaga_id)
     return render(request, 'vagas/detalhes_vaga.html', {'vaga': vaga})
 
+
 # Candidatar-se a uma vaga
+@login_required
 def candidatar_vaga(request, vaga_id):
-    if not request.user.is_authenticated:
-        messages.error(request, "Você precisa estar logado para se candidatar a uma vaga.")
-        return redirect('login')
-
-    # Obtenha a vaga e o perfil do usuário
     vaga = get_object_or_404(Vaga, id=vaga_id)
-    profile = request.user.profile
+    candidato = request.user
 
-    # Verifique se o usuário já se candidatou à vaga
-    if Inscricao.objects.filter(usuario=profile, vaga=vaga).exists():
-        messages.warning(request, "Você já se candidatou a esta vaga.")
-    else:
-        Inscricao.objects.create(usuario=profile, vaga=vaga)
+    # Verificar se o usuário já se candidatou
+    if Candidatura.objects.filter(vaga=vaga, candidato=candidato).exists():
+        messages.error(request, "Você já se candidatou a esta vaga.")
+        return redirect('detalhes_vaga', vaga_id=vaga_id)
+
+    # Criar a candidatura
+    try:
+        Candidatura.objects.create(vaga=vaga, candidato=candidato)
         messages.success(request, "Candidatura realizada com sucesso!")
+    except Exception as e:
+        messages.error(request, f"Erro ao realizar candidatura: {e}")
 
-    return redirect('index')
+    return redirect('detalhes_vaga', vaga_id=vaga_id)
 
-# Criar perfil
+
+# Perfil do usuário
+@login_required
+def meu_perfil(request):
+    profile = request.user.profile
+    if request.method == "POST":
+        form = ProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Perfil atualizado com sucesso!")
+            return redirect('meu_perfil')
+        else:
+            messages.error(request, "Erro ao atualizar o perfil.")
+    else:
+        form = ProfileForm(instance=profile)
+    return render(request, 'vagas/meu_perfil.html', {'form': form})
+
+
+# Minhas candidaturas
+@login_required
+def minhas_candidaturas(request):
+    candidaturas = Candidatura.objects.filter(candidato=request.user).select_related('vaga')
+    return render(request, 'vagas/minhas_candidaturas.html', {'candidaturas': candidaturas})
+
+
+# Criar vaga
+@login_required
+def criar_vaga(request):
+    """
+    View para criação de vagas.
+    Apenas usuários autenticados podem criar uma vaga.
+    """
+    if request.method == "POST":
+        form = VagaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Vaga criada com sucesso!")
+            return redirect('listar_vagas')
+        else:
+            messages.error(request, "Erro ao salvar a vaga. Verifique os dados.")
+    else:
+        form = VagaForm()
+
+    return render(request, 'vagas/criar_vaga.html', {'form': form})
+# Listar candidatos por vaga
+@login_required
+def listar_candidatos_por_vaga(request, vaga_id):
+    vaga = get_object_or_404(Vaga, id=vaga_id)
+    candidaturas = Candidatura.objects.filter(vaga=vaga)
+    return render(request, 'vagas/listar_candidatos_por_vaga.html', {'vaga': vaga, 'candidaturas': candidaturas})
+
 @login_required
 def criar_perfil(request):
+    """
+    View para criação do perfil do usuário.
+    """
     if request.method == "POST":
         form = ProfileForm(request.POST)
         if form.is_valid():
@@ -119,83 +179,51 @@ def criar_perfil(request):
             profile.user = request.user
             profile.save()
             messages.success(request, "Perfil criado com sucesso!")
-            return redirect('listar_vagas')
+            return redirect('meu_perfil')
         else:
             messages.error(request, "Erro ao criar perfil. Verifique os dados.")
     else:
         form = ProfileForm()
+
     return render(request, 'vagas/criar_perfil.html', {'form': form})
 
-# Editar perfil
 @login_required
 def editar_perfil(request):
+    """
+    View para edição do perfil do usuário.
+    Apenas usuários autenticados podem acessar.
+    """
     profile = request.user.profile
     if request.method == "POST":
         form = ProfileForm(request.POST, instance=profile)
         if form.is_valid():
             form.save()
             messages.success(request, "Perfil atualizado com sucesso!")
-            return redirect('listar_vagas')
+            return redirect('meu_perfil')
         else:
-            messages.error(request, "Erro ao atualizar perfil. Verifique os dados.")
+            messages.error(request, "Erro ao atualizar o perfil. Verifique os dados.")
     else:
         form = ProfileForm(instance=profile)
+
     return render(request, 'vagas/editar_perfil.html', {'form': form})
 
-@login_required
-def criar_vaga(request):
-    if request.method == "POST":
-        form = VagaForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Vaga criada com sucesso!")
-            return redirect('listar_vagas')
-    else:
-        form = VagaForm()
-    return render(request, 'vagas/criar_vaga.html', {'form': form})
-
-# Páginas estáticas
 def sobre_nos(request):
+    """
+    View para a página "Sobre Nós".
+    Exibe informações sobre a plataforma.
+    """
     return render(request, 'vagas/sobre_nos.html')
 
 def contato(request):
+    """
+    View para a página de contato.
+    Exibe informações de contato da plataforma.
+    """
     return render(request, 'vagas/contato.html')
 
 def termos_de_uso(request):
+    """
+    View para a página de termos de uso.
+    Exibe os termos e condições da plataforma.
+    """
     return render(request, 'vagas/termos_de_uso.html')
-
-# Perfil do usuário
-@login_required
-def meu_perfil(request):
-    profile = request.user.profile
-    if request.method == "POST":
-        profile.nome_completo = request.POST.get("nome_completo", "")
-        profile.telefone = request.POST.get("telefone", "")
-        profile.objetivo = request.POST.get("objetivo", "")
-        profile.formacao = request.POST.get("formacao", "")
-        profile.experiencia = request.POST.get("experiencia", "")
-        profile.habilidades = request.POST.get("habilidades", "")
-        profile.idiomas = request.POST.get("idiomas", "")
-        profile.certificacoes = request.POST.get("certificacoes", "")
-        profile.links = request.POST.get("links", "")
-        profile.save()
-        messages.success(request, "Perfil atualizado com sucesso!")
-        return redirect('meu_perfil')
-    return render(request, 'vagas/meu_perfil.html', {'user': request.user})
-
-# Minhas candidaturas
-@login_required
-def minhas_candidaturas(request):
-    inscricoes = Inscricao.objects.filter(usuario=request.user.profile)
-    return render(request, 'vagas/minhas_candidaturas.html', {'inscricoes': inscricoes})
-
-
-
-
-
-
-
-
-
-
-

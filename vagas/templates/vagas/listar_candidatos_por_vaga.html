@@ -1,0 +1,20 @@
+{% extends 'vagas/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Candidatos para a vaga: {{ vaga.titulo }}</h1>
+    {% if candidaturas %}
+        <ul class="list-group">
+            {% for candidatura in candidaturas %}
+                <li class="list-group-item bg-dark text-light">
+                    <strong>Nome:</strong> {{ candidatura.candidato.username }}<br>
+                    <strong>Email:</strong> {{ candidatura.candidato.email }}<br>
+                    <strong>Data da Candidatura:</strong> {{ candidatura.data_candidatura|date:"d/m/Y H:i" }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-center">Nenhum candidato se inscreveu para esta vaga.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,22 +1,16 @@
 {% extends 'vagas/base.html' %}
 
 {% block content %}
-<section class="bg-black text-gold py-5">
-    <div class="container">
-        <h1 class="text-center fw-bold mb-4">Termos de Uso</h1>
-        <p class="fs-5">
-            Bem-vindo aos Termos de Uso do <span class="fw-bold">HefestoTec</span>. Ao utilizar nossa plataforma, você concorda com as condições descritas abaixo:
-        </p>
-        <ul class="fs-5">
-            <li>Respeitar todas as normas e regulamentos aplicáveis.</li>
-            <li>Fornecer informações verdadeiras ao criar sua conta e se candidatar às vagas.</li>
-            <li>Não utilizar a plataforma para fins ilegais ou prejudiciais.</li>
-            <li>Proteger as informações de login e manter a confidencialidade da sua conta.</li>
-        </ul>
-        <p class="fs-5 mt-4">
-            Para mais detalhes, entre em contato conosco por meio da nossa <a href="{% url 'contato' %}" class="text-gold">página de contato</a>.
-        </p>
-    </div>
-</section>
+<div class="container mt-5 text-light">
+    <h1 class="text-center mb-4">Termos de Uso</h1>
+    <p>Bem-vindo ao HefestoTec. Ao utilizar nossos serviços, você concorda com os seguintes termos de uso:</p>
+    <ul>
+        <li>Você é responsável por fornecer informações verdadeiras e precisas em seu perfil.</li>
+        <li>É proibido o uso da plataforma para fins ilícitos ou prejudiciais.</li>
+        <li>O HefestoTec não garante contratação ou retorno sobre candidaturas enviadas.</li>
+        <li>A plataforma pode alterar seus termos de uso a qualquer momento, com aviso prévio aos usuários.</li>
+    </ul>
+    <p>Se tiver dúvidas sobre nossos termos, entre em contato pelo email <a href="mailto:suporte@hefestotec.com" class="text-warning">suporte@hefestotec.com</a>.</p>
+</div>
 {% endblock %}
 
